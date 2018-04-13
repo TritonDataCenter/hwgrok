@@ -2,15 +2,15 @@
  * Copyright (c) 2018, Joyent, Inc.
  */
 #ifndef _LLIST_H
-#define _LLIST_H
+#define	_LLIST_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 typedef struct llist {
-        struct llist *ll_prev;
-        struct llist *ll_next;
+	struct llist *ll_prev;
+	struct llist *ll_next;
 } llist_t;
 
 #define	LL_WALK_NEXT	1

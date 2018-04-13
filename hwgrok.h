@@ -15,6 +15,8 @@
 
 #include "llist.h"
 
+extern void hwg_debug(const char *, ...);
+
 typedef struct hwg_common_info {
 	char *hwci_manufacturer;
 	char *hwci_model;
@@ -33,12 +35,18 @@ typedef struct hwg_sensor {
 	struct llist *ll_next;
 	char *hwsen_name;
 	char *hwsen_type;
-	double hwsen_reading;
 	char *hwsen_units;
 	uint32_t hwsen_state;
 	char *hwsen_state_descr;
 	boolean_t hwsen_hasreading;
 	boolean_t hwsen_hasstate;
+	double hwsen_reading;
+	double hwsen_thresh_lnc;
+	double hwsen_thresh_lcr;
+	double hwsen_thresh_lnr;
+	double hwsen_thresh_unc;
+	double hwsen_thresh_ucr;
+	double hwsen_thresh_unr;
 } hwg_sensor_t;
 
 typedef struct hwg_led {
@@ -126,7 +134,7 @@ typedef struct hwg_chassis {
 typedef struct hwg_info {
 	llist_t hwi_dimm_slots;
 	llist_t hwi_disk_bays;
-        llist_t hwi_processors;
+	llist_t hwi_processors;
 	llist_t hwi_dimms;
 	llist_t hwi_disks;
 	llist_t hwi_psus;

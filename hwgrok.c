@@ -17,7 +17,7 @@ extern int dump_hw_config_json(hwg_info_t *, char *);
 
 static const char *pname;
 static const char optstr[] = "dR:";
-static boolean_t enable_debug = B_FALSE;
+boolean_t enable_debug = B_FALSE;
 
 static void
 usage()
@@ -25,7 +25,7 @@ usage()
 	(void) fprintf(stderr, "\n%s [-d][-R root]\n\n", pname);
 }
 
-static void
+void
 hwg_debug(const char *format, ...)
 {
 	va_list ap;
@@ -51,26 +51,59 @@ static void
 }
 
 static void
-get_sensor_type(uint32_t units, char **unitstr)
+hwsen_free_sensor(hwg_sensor_t *hwsen)
 {
+	free(hwsen->hwsen_name);
+	free(hwsen->hwsen_type);
+	free(hwsen->hwsen_units);
+	free(hwsen->hwsen_state_descr);
+	free(hwsen);
+}
+
+static void
+get_sensor_type(uint32_t reading_type, uint32_t units, char **typestr)
+{
+	char buf[64];
+
+	if (reading_type != TOPO_SENSOR_TYPE_THRESHOLD_STATE) {
+		topo_sensor_type_name(reading_type, buf, sizeof (buf));
+		*typestr = strdup(buf);
+		return;
+	}
+
+	/*
+	 * For threshold sensors, we infer the type based on the type of units
+	 * used for the reading.
+	 */
 	switch (units) {
 	case TOPO_SENSOR_UNITS_DEGREES_C:
 	case TOPO_SENSOR_UNITS_DEGREES_F:
 	case TOPO_SENSOR_UNITS_DEGREES_K:
-		*unitstr = strdup("temperature");
+		*typestr = strdup("temperature");
 		break;
 	case TOPO_SENSOR_UNITS_HZ:
 	case TOPO_SENSOR_UNITS_RPM:
-		*unitstr = strdup("speed");
+		*typestr = strdup("speed");
 		break;
 	case TOPO_SENSOR_UNITS_VOLTS:
-		*unitstr = strdup("voltage");
+		*typestr = strdup("voltage");
 		break;
 	default:
-		*unitstr = strdup("unknown");
+		*typestr = strdup("unknown");
 	}
 }
 
+/*
+ * Gather up information that is common to all node types:
+ *  - FMRI
+ *  - serial number
+ *  - part number
+ *  - revision id
+ *  - FRU label
+ *  - associated sensors and/or indicators
+ *
+ * XXX - add code to gather any open FM cases associated with this node
+ */
 static int
 get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 {
@@ -98,9 +131,14 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 	    &(cinfo->hwci_label), &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto out;
 	}
+
 	(void) topo_node_facility(thp, node, TOPO_FAC_TYPE_SENSOR,
 	    TOPO_FAC_TYPE_ANY, &sensorlist, &err);
 
+	/*
+	 * Iterate through all of the child sensor facilty nodes, which
+	 * represent sensors that are associated with this hardware resource.
+	 */
 	for (fp = topo_list_next(&sensorlist.tf_list);
 	    fp != NULL;
 	    fp = topo_list_next(fp)) {
@@ -111,6 +149,12 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		hwg_debug("Found sensor (%s)\n", topo_node_name(fp->tf_node));
 		if ((sensor = hwg_zalloc(sizeof (hwg_sensor_t))) == NULL)
 			goto out;
+
+		/*
+		 * Lookup the sensor reading type and sensor class. This tell
+		 * us what type of sensor we're dealing with, which in turn
+		 * informs what data we need to gather on it.
+		 */
 		if (topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    "type", &reading_type, &err) != 0 ||
 		    topo_prop_get_string(fp->tf_node, TOPO_PGROUP_FACILITY,
@@ -127,7 +171,7 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		} else {
 			sensor->hwsen_hasstate = B_TRUE;
 		}
-	
+
 		if (sensor->hwsen_hasstate == B_TRUE) {
 			topo_sensor_state_name(reading_type,
 			    sensor->hwsen_state, buf, 64);
@@ -137,8 +181,15 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 
 		llist_append(&(cinfo->hwci_sensors), sensor);
 
-		if (strcmp(sensor_class, TOPO_SENSOR_CLASS_THRESHOLD) != 0)
+		/*
+		 * If it's a discrete sensor, get the sensor type and then
+		 * move on to the next sensor.
+		 */
+		if (strcmp(sensor_class, TOPO_SENSOR_CLASS_THRESHOLD) != 0) {
+			get_sensor_type(reading_type, 0,
+			    &(sensor->hwsen_type));
 			continue;
+		}
 
 		sensor->hwsen_hasreading = B_TRUE;
 		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
@@ -148,9 +199,50 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 			free(sensor);
 			goto out;
 		}
-		get_sensor_type(units, &(sensor->hwsen_type));
+		get_sensor_type(reading_type, units, &(sensor->hwsen_type));
 		topo_sensor_units_name(units, buf, 64);
 		sensor->hwsen_units = strdup(buf);
+
+		/*
+		 * Gather the upper and lower sensor reading thresholds, if
+		 * available.
+		 */
+		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
+		    TOPO_PROP_THRESHOLD_LNC, &(sensor->hwsen_thresh_lnc),
+		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+			free(sensor);
+			goto out;
+		}
+		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
+		    TOPO_PROP_THRESHOLD_LCR, &(sensor->hwsen_thresh_lcr),
+		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+			free(sensor);
+			goto out;
+		}
+		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
+		    TOPO_PROP_THRESHOLD_LNR, &(sensor->hwsen_thresh_lnr),
+		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+			free(sensor);
+			goto out;
+		}
+		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
+		    TOPO_PROP_THRESHOLD_UNC, &(sensor->hwsen_thresh_unc),
+		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+			free(sensor);
+			goto out;
+		}
+		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
+		    TOPO_PROP_THRESHOLD_UCR, &(sensor->hwsen_thresh_ucr),
+		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+			free(sensor);
+			goto out;
+		}
+		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
+		    TOPO_PROP_THRESHOLD_UNR, &(sensor->hwsen_thresh_unr),
+		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+			free(sensor);
+			goto out;
+		}
 	}
 
 	(void) topo_node_facility(thp, node, TOPO_FAC_TYPE_INDICATOR,

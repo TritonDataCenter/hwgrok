@@ -6,39 +6,39 @@
 void
 llist_prepend(llist_t *list, void *data)
 {
-        llist_t *head, *tail;
+	llist_t *head, *tail;
 
-        assert(list != NULL);
-        head = list->ll_next;
-        tail = list->ll_prev;
+	assert(list != NULL);
+	head = list->ll_next;
+	tail = list->ll_prev;
 
-        if (head == NULL) {
-                /* empty list */
-                list->ll_next = list->ll_prev = (llist_t *)data;
-        } else {
-                ((llist_t *)data)->ll_next = head;
-                head->ll_prev = (llist_t *)data;
-                list->ll_next = (llist_t *)data;
-        }
+	if (head == NULL) {
+		/* empty list */
+		list->ll_next = list->ll_prev = (llist_t *)data;
+	} else {
+		((llist_t *)data)->ll_next = head;
+		head->ll_prev = (llist_t *)data;
+		list->ll_next = (llist_t *)data;
+	}
 }
 
 void
 llist_append(llist_t *list, void *data)
 {
-        llist_t *head, *tail;
+	llist_t *head, *tail;
 
-        assert(list != NULL);
-        head = list->ll_next;
-        tail = list->ll_prev;
+	assert(list != NULL);
+	head = list->ll_next;
+	tail = list->ll_prev;
 
-        if (head == NULL) {
-                /* empty list */
-                list->ll_next = list->ll_prev = (llist_t *)data;
-        } else {
-                ((llist_t *)data)->ll_prev = tail;
-                tail->ll_next = (llist_t *)data;
-                list->ll_prev = (llist_t *)data;
-        }
+	if (head == NULL) {
+		/* empty list */
+		list->ll_next = list->ll_prev = (llist_t *)data;
+	} else {
+		((llist_t *)data)->ll_prev = tail;
+		tail->ll_next = (llist_t *)data;
+		list->ll_prev = (llist_t *)data;
+	}
 }
 
 int
@@ -65,7 +65,7 @@ llist_walker(llist_t *list, int (*cbfunc)(llist_t *, void *), void *arg)
 int
 llist_remove(llist_t *list, void *data)
 {
-        return (0);
+	return (0);
 }
 
 void
@@ -82,4 +82,3 @@ llist_destroy(llist_t *list, int (*cbfunc)(llist_t *, void *), void *arg)
 		(void) cbfunc(victim, arg);
 	}
 }
-

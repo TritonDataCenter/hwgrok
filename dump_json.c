@@ -2,6 +2,56 @@
  * Copyright (c) 2018, Joyent, Inc.
  */
 #include "hwgrok.h"
+
+/*
+ * JSON property names
+ */
+#define	CHASSIS			"chassis"
+#define	DIMM			"dimm"
+#define	DISK			"disk"
+#define	DRIVE_BAYS		"drive-bays"
+#define	FANS			"fans"
+#define	FIRMWARE_REV		"firmware-revision"
+#define	IPV4_ADDR		"ipv4-address"
+#define	IPV4_SUBNET		"ipv4-subnet"
+#define	IPV4_GATEWAY		"ipv4-gateway"
+#define	IPV4_CFG_TYPE		"ipv4-config-type"
+#define	LABEL			"label"
+#define	LEDS			"leds"
+#define	MANUF			"manufacturer"
+#define	MEMORY			"memory"
+#define	MODE			"mode"
+#define	MODEL			"model"
+#define	MOTHERBOARD		"motherboard"
+#define	NAME			"name"
+#define	NUM_CORES		"number-of-cores"
+#define	NUM_THREADS		"number-of-threads-per-core"
+#define	PARTNO			"part-number"
+#define	PROCESSORS		"processors"
+#define	PSUS			"power-supplies"
+#define	READING			"reading"
+#define	SENSORS			"sensors"
+#define	SERIAL			"serial-number"
+#define	SERVICE_PROCESSOR	"service-processor"
+#define	SPEED_RPM		"speed-in-rpm"
+#define	SZ_BYTES		"size-in-bytes"
+#define	STATE			"state"
+#define	STATE_DESC		"state-description"
+#define THRESH_LNC		"threshold-lower-non-critical"
+#define THRESH_LCR		"threshold-lower-critical"
+#define THRESH_LNR		"threshold-lower-non-recoverable"
+#define THRESH_UNC		"threshold-upper-non-critical"
+#define THRESH_UCR		"threshold-upper-critical"
+#define THRESH_UNR		"threshold-upper-non-recoverable"
+#define	TYPE			"type"
+#define	UNITS			"units"
+
+/*
+ * Used as default property value for the case where the property is present
+ * but the value is not known for some reason.
+ */
+#define	UNKNOWN			"unknown"
+
 static int
 dump_sensor_json(llist_t *node, void *arg)
 {
@@ -13,16 +63,34 @@ dump_sensor_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{\"name\":\"%s\",", sensor->hwsen_name);
-	(void) printf("\"type\":\"%s\"", sensor->hwsen_type);
+	(void) printf("{\"%s\":\"%s\",", NAME, sensor->hwsen_name);
+	(void) printf("\"%s\":\"%s\"", TYPE, sensor->hwsen_type);
 	if (sensor->hwsen_hasstate == B_TRUE) {
-		(void) printf(",\"state\":%u,", sensor->hwsen_state);
-		(void) printf("\"state-description\":\"%s\"",
+		(void) printf(",\"%s\":%u,", STATE, sensor->hwsen_state);
+		(void) printf("\"%s\":\"%s\"", STATE_DESC,
 		    sensor->hwsen_state_descr);
 	}
 	if (sensor->hwsen_hasreading == B_TRUE) {
-		(void) printf(",\"reading\":%lf,", sensor->hwsen_reading);
-		(void) printf("\"units\":\"%s\"", sensor->hwsen_units);
+		(void) printf(",\"%s\":%lf,", READING, sensor->hwsen_reading);
+		(void) printf("\"%s\":\"%s\"", UNITS, sensor->hwsen_units);
+		if (sensor->hwsen_thresh_lnc != 0)
+			(void) printf(",\"%s\":%lf", THRESH_LNC,
+			    sensor->hwsen_thresh_lnc);
+		if (sensor->hwsen_thresh_lnc != 0)
+			(void) printf(",\"%s\":%lf", THRESH_LCR,
+			    sensor->hwsen_thresh_lcr);
+		if (sensor->hwsen_thresh_lnc != 0)
+			(void) printf(",\"%s\":%lf", THRESH_LNR,
+			    sensor->hwsen_thresh_lnr);
+		if (sensor->hwsen_thresh_lnc != 0)
+			(void) printf(",\"%s\":%lf", THRESH_UNC,
+			    sensor->hwsen_thresh_unc);
+		if (sensor->hwsen_thresh_lnc != 0)
+			(void) printf(",\"%s\":%lf", THRESH_UCR,
+			    sensor->hwsen_thresh_ucr);
+		if (sensor->hwsen_thresh_lnc != 0)
+			(void) printf(",\"%s\":%lf", THRESH_UNR,
+			    sensor->hwsen_thresh_unr);
 	}
 	(void) printf("}");
 
@@ -39,8 +107,8 @@ dump_led_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{ \"type\":\"%s\",", led->hwled_type);
-	(void) printf("\"mode\":\"%s\"}", led->hwled_mode);
+	(void) printf("{ \"%s\":\"%s\",", TYPE, led->hwled_type);
+	(void) printf("\"%s\":\"%s\"}", MODE, led->hwled_mode);
 	return (LL_WALK_NEXT);
 }
 
@@ -50,7 +118,7 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 	boolean_t firstelem;
 
 	firstelem = B_TRUE;
-	(void) printf("\"sensors\": [");
+	(void) printf("\"%s\": [", SENSORS);
 	if (cinfo->hwci_sensors.ll_next != NULL &&
 	    llist_walker(&(cinfo->hwci_sensors), dump_sensor_json,
 	    &firstelem) != 0) {
@@ -59,7 +127,7 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 	}
 	(void) printf("],");
 
-	(void) printf("\"leds\": [");
+	(void) printf("\"%s\": [", LEDS);
 	firstelem = B_TRUE;
 	if (cinfo->hwci_leds.ll_next != NULL &&
 	    llist_walker(&(cinfo->hwci_leds), dump_led_json,
@@ -73,28 +141,28 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 static void
 dump_sp_json(hwg_sp_t *sp)
 {
-	char *rev = "unknown";
+	char *rev = UNKNOWN;
 	hwg_common_info_t *cinfo = &(sp->hwsp_common_info);
 
 	if (cinfo->hwci_version != NULL)
 		rev = cinfo->hwci_version;
 
-	(void) printf("\"service-processor\":{");
-	(void) printf("\"firmware-revision\":\"%s\",", rev);
+	(void) printf("\"%s\":{", SERVICE_PROCESSOR);
+	(void) printf("\"%s\":\"%s\",", FIRMWARE_REV, rev);
 
-	(void) printf("\"ipv4-address\":\"%s\",",
+	(void) printf("\"%s\":\"%s\",", IPV4_ADDR,
 	    sp->hwsp_ipv4_addr != NULL ?
 	    sp->hwsp_ipv4_addr : "");
 
-	(void) printf("\"ipv4-subnet\":\"%s\",",
+	(void) printf("\"%s\":\"%s\",", IPV4_SUBNET,
 	    sp->hwsp_ipv4_subnet != NULL ?
 	    sp->hwsp_ipv4_subnet : "");
 
-	(void) printf("\"ipv4-gateway\":\"%s\",",
+	(void) printf("\"%s\":\"%s\",", IPV4_GATEWAY,
 	    sp->hwsp_ipv4_gateway != NULL ?
 	    sp->hwsp_ipv4_gateway : "");
 
-	(void) printf("\"ipv4-config-type\":\"%s\"",
+	(void) printf("\"%s\":\"%s\"", IPV4_CFG_TYPE,
 	    sp->hwsp_ipv4_config_type != NULL ?
 	    sp->hwsp_ipv4_config_type : "");
 
@@ -104,7 +172,7 @@ dump_sp_json(hwg_sp_t *sp)
 static void
 dump_motherboard_json(hwg_motherboard_t *mb)
 {
-	char *model = "unknown", *manuf = "unknown", *rev = "unknown";
+	char *model = UNKNOWN, *manuf = UNKNOWN, *rev = UNKNOWN;
 	hwg_common_info_t *cinfo = &(mb->hwmbo_common_info);
 
 	if (cinfo->hwci_model != NULL)
@@ -114,10 +182,10 @@ dump_motherboard_json(hwg_motherboard_t *mb)
 	if (cinfo->hwci_version != NULL)
 		rev = cinfo->hwci_version;
 
-	(void) printf("\"motherboard\":{");
-	(void) printf("\"manufacturer\":\"%s\",", manuf);
-	(void) printf("\"model\":\"%s\",", model);
-	(void) printf("\"firmware-revision\":\"%s\",", rev);
+	(void) printf("\"%s\":{", MOTHERBOARD);
+	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
+	(void) printf("\"%s\":\"%s\",", MODEL, model);
+	(void) printf("\"%s\":\"%s\",", FIRMWARE_REV, rev);
 
 	dump_facilities_json(cinfo);
 
@@ -127,7 +195,7 @@ dump_motherboard_json(hwg_motherboard_t *mb)
 static void
 dump_chassis_json(hwg_chassis_t *chassis)
 {
-	char *model = "unknown", *manuf = "unknown";
+	char *model = UNKNOWN, *manuf = UNKNOWN;
 	hwg_common_info_t *cinfo = &(chassis->hwch_common_info);
 
 	if (cinfo->hwci_model != NULL)
@@ -135,9 +203,9 @@ dump_chassis_json(hwg_chassis_t *chassis)
 	if (cinfo->hwci_manufacturer != NULL)
 		manuf = cinfo->hwci_manufacturer;
 
-	(void) printf("\"chassis\":{");
-	(void) printf("\"manufacturer\":\"%s\",", manuf);
-	(void) printf("\"model\":\"%s\",", model);
+	(void) printf("\"%s\":{", CHASSIS);
+	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
+	(void) printf("\"%s\":\"%s\",", MODEL, model);
 
 	dump_facilities_json(cinfo);
 
@@ -155,7 +223,7 @@ dump_fan_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{\"label\":\"%s\",", cinfo->hwci_label);
+	(void) printf("{\"%s\":\"%s\",", LABEL, cinfo->hwci_label);
 
 	dump_facilities_json(cinfo);
 
@@ -167,7 +235,7 @@ dump_fan_json(llist_t *node, void *arg)
 static int
 dump_psu_json(llist_t *node, void *arg)
 {
-	char *model = "unknown", *manuf = "unknown", *rev = "unknown";
+	char *model = UNKNOWN, *manuf = UNKNOWN, *rev = UNKNOWN;
 	hwg_psu_t *psu = (hwg_psu_t *)node;
 	hwg_common_info_t *cinfo = &(psu->hwps_common_info);
 	boolean_t firstelem = *(boolean_t *)arg;
@@ -176,7 +244,7 @@ dump_psu_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{\"label\":\"%s\",", cinfo->hwci_label);
+	(void) printf("{\"%s\":\"%s\",", LABEL, cinfo->hwci_label);
 
 	if (cinfo->hwci_model != NULL)
 		model = cinfo->hwci_model;
@@ -185,9 +253,9 @@ dump_psu_json(llist_t *node, void *arg)
 	if (cinfo->hwci_version != NULL)
 		rev = cinfo->hwci_version;
 
-	(void) printf("\"manufacturer\":\"%s\",", manuf);
-	(void) printf("\"model\":\"%s\",", model);
-	(void) printf("\"firmware-revision\":\"%s\",", rev);
+	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
+	(void) printf("\"%s\":\"%s\",", MODEL, model);
+	(void) printf("\"%s\":\"%s\",", FIRMWARE_REV, rev);
 
 	dump_facilities_json(cinfo);
 
@@ -199,7 +267,7 @@ dump_psu_json(llist_t *node, void *arg)
 static int
 dump_processor_json(llist_t *node, void *arg)
 {
-	char *model = "unknown", *manuf = "unknown";
+	char *model = UNKNOWN, *manuf = UNKNOWN;
 	hwg_processor_t *chip = (hwg_processor_t *)node;
 	hwg_common_info_t *cinfo = &(chip->hwpr_common_info);
 	boolean_t firstelem = *(boolean_t *)arg;
@@ -208,18 +276,18 @@ dump_processor_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{\"label\":\"%s\",", cinfo->hwci_label);
+	(void) printf("{\"%s\":\"%s\",", LABEL, cinfo->hwci_label);
 
 	if (cinfo->hwci_model != NULL)
 		model = cinfo->hwci_model;
 	if (cinfo->hwci_manufacturer != NULL)
 		manuf = cinfo->hwci_manufacturer;
 
-	(void) printf("\"manufacturer\":\"%s\",", manuf);
-	(void) printf("\"model\":\"%s\",", model);
+	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
+	(void) printf("\"%s\":\"%s\",", MODEL, model);
 
-	(void) printf("\"num-cores\":%u,", chip->hwpr_num_cores);
-	(void) printf("\"num-threads-per-core\":%u,",
+	(void) printf("\"%s\":%u,", NUM_CORES, chip->hwpr_num_cores);
+	(void) printf("\"%s\":%u,", NUM_THREADS,
 	    (chip->hwpr_num_threads / chip->hwpr_num_cores));
 
 	dump_facilities_json(cinfo);
@@ -232,8 +300,8 @@ dump_processor_json(llist_t *node, void *arg)
 static void
 dump_disk_json(hwg_disk_t *disk)
 {
-	char *model = "unknown", *manuf = "unknown", *rev = "unknown";
-	char *serial = "unknown";
+	char *model = UNKNOWN, *manuf = UNKNOWN, *rev = UNKNOWN;
+	char *serial = UNKNOWN;
 	hwg_common_info_t *cinfo = &(disk->hwdk_common_info);
 	boolean_t firstelem;
 
@@ -246,13 +314,13 @@ dump_disk_json(hwg_disk_t *disk)
 	if (cinfo->hwci_version != NULL)
 		rev = cinfo->hwci_version;
 
-	(void) printf(",\"disk\": {");
-	(void) printf("\"manufacturer\": \"%s\",", manuf);
-	(void) printf("\"model\":\"%s\",", model);
-	(void) printf("\"serial\":\"%s\",", serial);
-	(void) printf("\"firmware-revision\":\"%s\",", rev);
-	(void) printf("\"size-in-bytes\":%u,", disk->hwdk_size);
-	(void) printf("\"speed-in-rpm\":%u,", disk->hwdk_speed);
+	(void) printf(",\"%s\": {", DISK);
+	(void) printf("\"%s\": \"%s\",", MANUF, manuf);
+	(void) printf("\"%s\":\"%s\",", MODEL, model);
+	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
+	(void) printf("\"%s\":\"%s\",", FIRMWARE_REV, rev);
+	(void) printf("\"%s\":%u,", SZ_BYTES, disk->hwdk_size);
+	(void) printf("\"%s\":%u,", SPEED_RPM, disk->hwdk_speed);
 
 	dump_facilities_json(cinfo);
 
@@ -270,7 +338,7 @@ dump_bay_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{ \"label\":\"%s\",",
+	(void) printf("{ \"%s\":\"%s\",", LABEL,
 	    bay->hwdkb_common_info.hwci_label);
 
 	dump_facilities_json(cinfo);
@@ -285,7 +353,7 @@ dump_bay_json(llist_t *node, void *arg)
 static void
 dump_dimm_json(hwg_dimm_t *dimm)
 {
-	char *manuf = "unknown", *part = "unknown", *serial = "unknown";
+	char *manuf = UNKNOWN, *part = UNKNOWN, *serial = UNKNOWN;
 	hwg_common_info_t *cinfo = &(dimm->hwdi_common_info);
 	boolean_t firstelem;
 
@@ -296,12 +364,12 @@ dump_dimm_json(hwg_dimm_t *dimm)
 	if (cinfo->hwci_serial != NULL)
 		serial = cinfo->hwci_serial;
 
-	(void) printf("\"dimm\":{");
-	(void) printf("\"manufacturer\":\"%s\",", manuf);
-	(void) printf("\"part\":\"%s\",", part);
-	(void) printf("\"serial\":\"%s\",", serial);
-	(void) printf("\"type\":\"%s\",", dimm->hwdi_type);
-	(void) printf("\"size-in-bytes\":\"%llu\",", dimm->hwdi_size);
+	(void) printf("\"%s\":{", DIMM);
+	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
+	(void) printf("\"%s\":\"%s\",", PARTNO, part);
+	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
+	(void) printf("\"%s\":\"%s\",", TYPE, dimm->hwdi_type);
+	(void) printf("\"%s\":\"%llu\",", SZ_BYTES, dimm->hwdi_size);
 
 	dump_facilities_json(cinfo);
 
@@ -318,7 +386,7 @@ dump_dimm_slot_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{ \"label\":\"%s\",",
+	(void) printf("{ \"%s\":\"%s\",", LABEL,
 	    slot->hwds_common_info.hwci_label);
 
 	if (slot->hwds_present == B_TRUE)
@@ -342,7 +410,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 
 	dump_motherboard_json(hwinfo->hwi_motherboard);
 
-	(void) printf("\n\"processors\": [\n");
+	(void) printf("\n\"%s\": [\n", PROCESSORS);
 
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_processors), dump_processor_json,
@@ -353,7 +421,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 		(void) printf("],\n");
 	}
 
-	(void) printf("\n\"memory\": [\n");
+	(void) printf("\n\"%s\": [\n", MEMORY);
 
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_dimm_slots), dump_dimm_slot_json,
@@ -364,7 +432,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 		(void) printf("],\n");
 	}
 
-	(void) printf("\n\"drive-bays\": [\n");
+	(void) printf("\n\"%s\": [\n", DRIVE_BAYS);
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_disk_bays), dump_bay_json,
 	    &firstelem) != 0) {
@@ -374,7 +442,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 		(void) printf("],\n");
 	}
 
-	(void) printf("\n\"power-supplies\": [\n");
+	(void) printf("\n\"%s\": [\n", PSUS);
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_psus), dump_psu_json,
 	    &firstelem) != 0) {
@@ -384,7 +452,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 		(void) printf("],\n");
 	}
 
-	(void) printf("\n\"fans\": [\n");
+	(void) printf("\n\"%s\": [\n", FANS);
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_fans), dump_fan_json,
 	    &firstelem) != 0) {

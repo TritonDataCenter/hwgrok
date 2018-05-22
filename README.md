@@ -4,7 +4,7 @@ This utility distills the topo snapshot down into a higher-level representation 
 Sample output:
 
 ```
-[root@sky1 /var/tmp/rejohnst]# ./hwgrok | json
+# ./hwgrok | json
 {
   "chassis": {
     "manufacturer": "unknown",

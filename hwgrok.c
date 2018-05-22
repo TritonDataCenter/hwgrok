@@ -517,7 +517,66 @@ grok_slot(topo_hdl_t *thp, tnode_t *node, void *arg)
 static int
 grok_pcidev(topo_hdl_t *thp, tnode_t *node, void *arg)
 {
-	hwg_debug("Found PCI(ex) device\n");
+	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
+	hwg_info_t *hwinfo = cbarg->cb_hw_info;
+	hwg_pcidev_t *pcidev;
+
+	hwg_debug("Found PCI(EX) device\n");
+	if ((pcidev = hwg_zalloc(sizeof (hwg_pcidev_t))) == NULL) {
+		(void) fprintf(stderr, "alloc failed\n");
+		return (-1);
+	}
+	if (get_common_props(thp, node, &(pcidev->hwpci_common_info)) != 0) {
+		(void) fprintf(stderr, "failure gathering common props\n");
+		free(pcidev);
+		return (-1);
+	}
+	llist_append(&(hwinfo->hwi_pcidevs), pcidev);
+	cbarg->cb_currdev = pcidev;
+
+	return (0);
+}
+
+static int
+grok_pcifn(topo_hdl_t *thp, tnode_t *node, void *arg)
+{
+	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
+	hwg_pcidev_t *pcidev;
+	int err;
+
+	hwg_debug("Found PCI(EX) function\n");
+	pcidev = cbarg->cb_currdev;
+	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_VENDNM,
+	    &(pcidev->hwpci_vendor), &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_DEVNM,
+	    &(pcidev->hwpci_devnm), &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_SUBSYSNM,
+	    &(pcidev->hwpci_subsysnm), &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DEV,
+	    &(pcidev->hwpci_devpath), &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DRIVER,
+	    &(pcidev->hwpci_drivernm), &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	if (topo_prop_get_uint32(node, TOPO_PGROUP_IO, TOPO_IO_INSTANCE,
+	    &(pcidev->hwpci_driverinst), &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+
 	return (0);
 }
 
@@ -670,9 +729,13 @@ topocb(topo_hdl_t *thp, tnode_t *node, void *arg)
 		grok_pcidev(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PCIEX_DEVICE) == 0) {
 		grok_pcidev(thp, node, arg);
+	} else if (strcmp(cbarg->cb_nodename, PCI_FUNCTION) == 0) {
+		grok_pcifn(thp, node, arg);
+	} else if (strcmp(cbarg->cb_nodename, PCIEX_FUNCTION) == 0) {
+		grok_pcifn(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PSU) == 0) {
 		grok_psu(thp, node, arg);
-	} else if (strcmp(cbarg->cb_nodename, "slot") == 0) {
+	} else if (strcmp(cbarg->cb_nodename, SLOT) == 0) {
 		grok_slot(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, SP) == 0) {
 		grok_sp(thp, node, arg);

@@ -98,6 +98,19 @@ typedef struct hwg_disk_bay {
 	boolean_t hwdkb_present;
 } hwg_disk_bay_t;
 
+typedef struct hwg_pcidev {
+	struct llist *ll_prev;
+	struct llist *ll_next;
+	hwg_common_info_t hwpci_common_info;
+	char *hwpci_vendor;
+	char *hwpci_devnm;
+	char *hwpci_subsysnm;
+	char *hwpci_devpath;
+	char *hwpci_drivernm;
+	uint_t hwpci_driverinst;
+	boolean_t hwpci_is_onboard;
+} hwg_pcidev_t;
+
 typedef struct hwg_psu {
 	struct llist *ll_prev;
 	struct llist *ll_next;
@@ -135,6 +148,7 @@ typedef struct hwg_info {
 	llist_t hwi_dimm_slots;
 	llist_t hwi_disk_bays;
 	llist_t hwi_processors;
+	llist_t hwi_pcidevs;
 	llist_t hwi_dimms;
 	llist_t hwi_disks;
 	llist_t hwi_psus;
@@ -151,6 +165,7 @@ typedef struct hwg_cbarg {
 	hwg_disk_bay_t *cb_currbay;
 	hwg_dimm_slot_t *cb_currslot;
 	hwg_processor_t *cb_currchip;
+	hwg_pcidev_t *cb_currdev;
 } hwg_cbarg_t;
 
 #endif	/* _HW_GROK_H */

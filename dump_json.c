@@ -7,9 +7,12 @@
  * JSON property names
  */
 #define	CHASSIS			"chassis"
+#define	DEVICE_PATH		"device-path"
 #define	DIMM			"dimm"
 #define	DISK			"disk"
 #define	DRIVE_BAYS		"drive-bays"
+#define	DRIVERNM		"device-driver-name"
+#define	DRIVERINST		"device-driver-instance"
 #define	FANS			"fans"
 #define	FIRMWARE_REV		"firmware-revision"
 #define	IPV4_ADDR		"ipv4-address"
@@ -27,6 +30,10 @@
 #define	NUM_CORES		"number-of-cores"
 #define	NUM_THREADS		"number-of-threads-per-core"
 #define	PARTNO			"part-number"
+#define	PCI_DEVICES		"pci-devices"
+#define	PCI_DEVICE_NAME		"pci-device-name"
+#define	PCI_SUBSYS_NAME		"pci-subsystem-name"
+#define	PCI_VENDOR_NAME		"pci-vendor-name"
 #define	PROCESSORS		"processors"
 #define	PSUS			"power-supplies"
 #define	READING			"reading"
@@ -37,12 +44,12 @@
 #define	SZ_BYTES		"size-in-bytes"
 #define	STATE			"state"
 #define	STATE_DESC		"state-description"
-#define THRESH_LNC		"threshold-lower-non-critical"
-#define THRESH_LCR		"threshold-lower-critical"
-#define THRESH_LNR		"threshold-lower-non-recoverable"
-#define THRESH_UNC		"threshold-upper-non-critical"
-#define THRESH_UCR		"threshold-upper-critical"
-#define THRESH_UNR		"threshold-upper-non-recoverable"
+#define	THRESH_LCR		"threshold-lower-critical"
+#define	THRESH_LNC		"threshold-lower-non-critical"
+#define	THRESH_LNR		"threshold-lower-non-recoverable"
+#define	THRESH_UCR		"threshold-upper-critical"
+#define	THRESH_UNC		"threshold-upper-non-critical"
+#define	THRESH_UNR		"threshold-upper-non-recoverable"
 #define	TYPE			"type"
 #define	UNITS			"units"
 
@@ -297,6 +304,39 @@ dump_processor_json(llist_t *node, void *arg)
 	return (LL_WALK_NEXT);
 }
 
+static int
+dump_pcidev_json(llist_t *node, void *arg)
+{
+	char *vendor = UNKNOWN, *devnm = UNKNOWN, *subsysnm = UNKNOWN;
+	hwg_pcidev_t *pcidev = (hwg_pcidev_t *)node;
+	hwg_common_info_t *cinfo = &(pcidev->hwpci_common_info);
+	boolean_t firstelem = *(boolean_t *)arg;
+
+	if (firstelem == B_FALSE)
+		(void) printf(",");
+	*(boolean_t *)arg = B_FALSE;
+
+	(void) printf("{\"%s\":\"%s\",", LABEL, cinfo->hwci_label);
+
+	if (pcidev->hwpci_vendor != NULL)
+		vendor = pcidev->hwpci_vendor;
+	if (pcidev->hwpci_devnm != NULL)
+		devnm = pcidev->hwpci_devnm;
+	if (pcidev->hwpci_subsysnm != NULL)
+		subsysnm = pcidev->hwpci_subsysnm;
+
+	(void) printf("\"%s\":\"%s\",", PCI_VENDOR_NAME, vendor);
+	(void) printf("\"%s\":\"%s\",", PCI_DEVICE_NAME, devnm);
+	(void) printf("\"%s\":\"%s\",", PCI_SUBSYS_NAME, subsysnm);
+	(void) printf("\"%s\":\"%s\",", DRIVERNM, pcidev->hwpci_drivernm);
+	(void) printf("\"%s\":%u,", DRIVERINST, pcidev->hwpci_driverinst);
+	(void) printf("\"%s\":\"%s\"", DEVICE_PATH, pcidev->hwpci_devpath);
+
+	(void) printf("}\n");
+
+	return (LL_WALK_NEXT);
+}
+
 static void
 dump_disk_json(hwg_disk_t *disk)
 {
@@ -425,6 +465,17 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_dimm_slots), dump_dimm_slot_json,
+	    &firstelem) != 0) {
+		(void) fprintf(stderr, "error walking slots\n");
+		return (-1);
+	} else {
+		(void) printf("],\n");
+	}
+
+	(void) printf("\n\"%s\": [\n", PCI_DEVICES);
+
+	firstelem = B_TRUE;
+	if (llist_walker(&(hwinfo->hwi_pcidevs), dump_pcidev_json,
 	    &firstelem) != 0) {
 		(void) fprintf(stderr, "error walking slots\n");
 		return (-1);

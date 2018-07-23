@@ -430,11 +430,13 @@ dump_dimm_slot_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{ \"%s\":\"%s\",", LABEL,
+	(void) printf("{ \"%s\":\"%s\"", LABEL,
 	    slot->hwds_common_info.hwci_label);
 
-	if (slot->hwds_present == B_TRUE)
+	if (slot->hwds_present == B_TRUE) {
+		(void) printf(",");
 		dump_dimm_json(slot->hwds_dimm);
+	}
 	(void) printf(" }\n");
 
 	return (LL_WALK_NEXT);

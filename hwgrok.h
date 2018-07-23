@@ -20,6 +20,7 @@
 #include "llist.h"
 
 extern void hwg_debug(const char *, ...);
+extern void hwg_error(const char *, ...);
 
 typedef struct hwg_common_info {
 	char *hwci_manufacturer;

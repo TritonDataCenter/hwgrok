@@ -133,7 +133,7 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 	if (cinfo->hwci_sensors.ll_next != NULL &&
 	    llist_walker(&(cinfo->hwci_sensors), dump_sensor_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking disk sensors\n");
+		hwg_error("error walking disk sensors\n");
 		return;
 	}
 	(void) printf("],");
@@ -143,7 +143,7 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 	if (cinfo->hwci_leds.ll_next != NULL &&
 	    llist_walker(&(cinfo->hwci_leds), dump_led_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking disk leds\n");
+		hwg_error("error walking disk leds\n");
 		return;
 	}
 	(void) printf("]");
@@ -459,7 +459,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_processors), dump_processor_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking processors\n");
+		hwg_error("error walking processors\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");
@@ -470,7 +470,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_dimm_slots), dump_dimm_slot_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking slots\n");
+		hwg_error("error walking slots\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");
@@ -481,7 +481,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_pcidevs), dump_pcidev_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking slots\n");
+		hwg_error("error walking slots\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");
@@ -491,7 +491,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_disk_bays), dump_bay_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking bays\n");
+		hwg_error("error walking bays\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");
@@ -501,7 +501,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_psus), dump_psu_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking psus\n");
+		hwg_error("error walking psus\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");
@@ -511,7 +511,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_fans), dump_fan_json,
 	    &firstelem) != 0) {
-		(void) fprintf(stderr, "error walking fans\n");
+		hwg_error("error walking fans\n");
 		return (-1);
 	} else {
 		(void) printf("]\n");

@@ -42,6 +42,16 @@ hwg_debug(const char *format, ...)
 	va_end(ap);
 }
 
+void
+hwg_error(const char *format, ...)
+{
+	va_list ap;
+
+	va_start(ap, format);
+	(void) vfprintf(stderr, format, ap);
+	va_end(ap);
+}
+
 static void
 *hwg_zalloc(ssize_t sz)
 {
@@ -302,11 +312,11 @@ grok_bay(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found disk bay\n");
 	if ((bay = hwg_zalloc(sizeof (hwg_disk_bay_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(bay->hwdkb_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props\n");
+		hwg_error("failure gathering common props\n");
 		free(bay);
 		return (-1);
 	}
@@ -328,12 +338,12 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found disk\n");
 	if ((disk = hwg_zalloc(sizeof (hwg_disk_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	cinfo = &(disk->hwdk_common_info);
 	if (get_common_props(thp, node, cinfo) != 0) {
-		(void) fprintf(stderr, "failure gathering common props\n");
+		hwg_error("failure gathering common props\n");
 		free(disk);
 		return (-1);
 	}
@@ -394,12 +404,12 @@ grok_chip(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found processor\n");
 	if ((processor = hwg_zalloc(sizeof (hwg_processor_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(processor->hwpr_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props on "
-		    "node: %s=%d\n", cbarg->cb_nodename, cbarg->cb_nodeinst);
+		hwg_error("failure gathering common props on node: %s=%d\n",
+		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		free(processor);
 		return (-1);
 	}
@@ -417,12 +427,12 @@ grok_psu(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found power-supply\n");
 	if ((psu = hwg_zalloc(sizeof (hwg_psu_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(psu->hwps_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props on "
-		    "node: %s=%d\n", cbarg->cb_nodename, cbarg->cb_nodeinst);
+		hwg_error("failure gathering common props on node: %s=%d\n",
+		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		free(psu);
 		return (-1);
 	}
@@ -441,12 +451,12 @@ grok_dimm(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found dimm\n");
 	if ((dimm = hwg_zalloc(sizeof (hwg_dimm_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	cinfo = &(dimm->hwdi_common_info);
 	if (get_common_props(thp, node, cinfo) != 0) {
-		(void) fprintf(stderr, "failure gathering common props\n");
+		hwg_error("failure gathering common props\n");
 		free(dimm);
 		return (-1);
 	}
@@ -483,12 +493,12 @@ grok_fan(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found fan\n");
 	if ((fan = hwg_zalloc(sizeof (hwg_fan_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(fan->hwfa_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props on "
-		    "node: %s=%d\n", cbarg->cb_nodename, cbarg->cb_nodeinst);
+		hwg_error("failure gathering common props on node: %s=%d\n",
+		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		free(fan);
 		return (-1);
 	}
@@ -502,14 +512,28 @@ grok_slot(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_dimm_slot_t *slot;
-
+	uint32_t slottype;
+	int err;
+	
 	hwg_debug("Found slot\n");
+	
+	/*
+	 * If it's not a DIMM slot, skip it.
+	 */
+	if (topo_prop_get_uint32(node, TOPO_PGROUP_SLOT, TOPO_PROP_SLOT_TYPE,
+	    &slottype, &err) < 0) {
+		hwg_error("failed to lookup prop %s/%s\n");
+		return (-1);
+	}
+	if (slottype != TOPO_SLOT_TYPE_DIMM)
+		return (0);
+
 	if ((slot = hwg_zalloc(sizeof (hwg_dimm_slot_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(slot->hwds_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props\n");
+		hwg_error("failure gathering common props\n");
 		free(slot);
 		return (-1);
 	}
@@ -527,11 +551,11 @@ grok_pcidev(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found PCI(EX) device\n");
 	if ((pcidev = hwg_zalloc(sizeof (hwg_pcidev_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(pcidev->hwpci_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props\n");
+		hwg_error("failure gathering common props\n");
 		free(pcidev);
 		return (-1);
 	}
@@ -594,11 +618,11 @@ grok_sp(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found service-processor\n");
 	if ((sp = hwg_zalloc(sizeof (hwg_sp_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(sp->hwsp_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props\n");
+		hwg_error("failure gathering common props\n");
 		free(sp);
 		return (-1);
 	}
@@ -654,13 +678,13 @@ grok_motherboard(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found motherboard\n");
 	if ((mb = hwg_zalloc(sizeof (hwg_motherboard_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	cinfo = &(mb->hwmbo_common_info);
 	if (get_common_props(thp, node, cinfo) != 0) {
-		(void) fprintf(stderr, "failure gathering common props on "
-		    "node: %s=%d\n", cbarg->cb_nodename, cbarg->cb_nodeinst);
+		hwg_error("failure gathering common props on node: %s=%d\n",
+		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		free(mb);
 		return (-1);
 	}
@@ -690,12 +714,12 @@ grok_chassis(topo_hdl_t *thp, tnode_t *node, void *arg)
 
 	hwg_debug("Found chassis\n");
 	if ((chassis = hwg_zalloc(sizeof (hwg_chassis_t))) == NULL) {
-		(void) fprintf(stderr, "alloc failed\n");
+		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(chassis->hwch_common_info)) != 0) {
-		(void) fprintf(stderr, "failure gathering common props on "
-		    "node: %s=%d\n", cbarg->cb_nodename, cbarg->cb_nodeinst);
+		hwg_error("failure gathering common props on node: %s=%d\n",
+		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		free(chassis);
 		return (-1);
 	}
@@ -778,24 +802,24 @@ main(int argc, char *argv[])
 	}
 
 	if ((thp = topo_open(TOPO_VERSION, root, &err)) == NULL) {
-		(void) fprintf(stderr, "failed to get topo handle: %s\n",
+		hwg_error("failed to get topo handle: %s\n",
 		    topo_strerror(err));
 		goto out;
 	}
 	if (topo_snap_hold(thp, NULL, &err) == NULL) {
-		(void) fprintf(stderr, "failed to take topo snapshot: %s\n",
+		hwg_error("failed to take topo snapshot: %s\n",
 		    topo_strerror(err));
 		goto out;
 	}
 
 	cbarg.cb_hw_info = &hwinfo;
 	if ((twp = topo_walk_init(thp, "hc", topocb, &cbarg, &err)) == NULL) {
-		(void) fprintf(stderr, "failed to init topo walker: %s\n",
+		hwg_error("failed to init topo walker: %s\n",
 		    topo_strerror(err));
 		goto out;
 	}
 	if (topo_walk_step(twp, TOPO_WALK_CHILD) == TOPO_WALK_ERR) {
-		(void) fprintf(stderr, "failed to walk topology\n");
+		hwg_error("failed to walk topology\n");
 		topo_walk_fini(twp);
 		goto out;
 	}

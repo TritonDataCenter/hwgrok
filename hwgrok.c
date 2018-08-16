@@ -74,6 +74,70 @@ hwsen_free_sensor(hwg_sensor_t *hwsen)
 	free(hwsen);
 }
 
+static int
+hwg_get_prop(tnode_t *node, topo_type_t ptype, const char *pgrp,
+    const char *pnm, hwg_numeric_prop_t *pval)
+{
+	int err, ret;
+
+	switch (ptype) {
+	case TOPO_TYPE_UINT32:
+		if (topo_prop_get_uint32(node, pgrp, pnm, &pval->hnp_u32,
+		    &err) != 0) {
+			pval->hnp_is_set = B_FALSE;
+			ret = (err == ETOPO_PROP_NOENT ? 0 : -1);
+			return (ret);
+		}
+		pval->hnp_type = ptype;
+		pval->hnp_is_set = B_TRUE;
+		break;
+	case TOPO_TYPE_INT32:
+		if (topo_prop_get_int32(node, pgrp, pnm, &pval->hnp_i32,
+		    &err) != 0) {
+			pval->hnp_is_set = B_FALSE;
+			ret = (err == ETOPO_PROP_NOENT ? 0 : -1);
+			return (ret);
+		}
+		pval->hnp_type = ptype;
+		pval->hnp_is_set = B_TRUE;
+		break;
+	case TOPO_TYPE_UINT64:
+		if (topo_prop_get_uint64(node, pgrp, pnm, &pval->hnp_u64,
+		    &err) != 0) {
+			pval->hnp_is_set = B_FALSE;
+			ret = (err == ETOPO_PROP_NOENT ? 0 : -1);
+			return (ret);
+		}
+		pval->hnp_type = ptype;
+		pval->hnp_is_set = B_TRUE;
+		break;
+	case TOPO_TYPE_INT64:
+		if (topo_prop_get_int64(node, pgrp, pnm, &pval->hnp_i64,
+		    &err) != 0) {
+			pval->hnp_is_set = B_FALSE;
+			ret = (err == ETOPO_PROP_NOENT ? 0 : -1);
+			return (ret);
+		}
+		pval->hnp_type = ptype;
+		pval->hnp_is_set = B_TRUE;
+		break;
+	case TOPO_TYPE_DOUBLE:
+		if (topo_prop_get_double(node, pgrp, pnm, &pval->hnp_dbl,
+		    &err) != 0) {
+			pval->hnp_is_set = B_FALSE;
+			ret = (err == ETOPO_PROP_NOENT ? 0 : -1);
+			return (ret);
+		}
+		pval->hnp_type = ptype;
+		pval->hnp_is_set = B_TRUE;
+		break;
+	default:
+		hwg_debug("%s: invalid type: %u", __func__, ptype);
+		return (-1);
+	}
+	return (0);
+}
+
 static void
 get_sensor_type(uint32_t reading_type, uint32_t units, char **typestr)
 {
@@ -130,7 +194,9 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 	    topo_fmri_nvl2str(thp, fmri, &(cinfo->hwci_fmristr), &err) != 0) {
 		goto out;
 	}
-
+	if (topo_fmri_nvl2str(thp, fmri, &cinfo->hwci_fmri, &err) != 0) {
+		goto out;
+	}
 	if (nvlist_lookup_string(fmri, FM_FMRI_HC_SERIAL_ID, &val) == 0 &&
 	    (cinfo->hwci_serial = strdup(val)) == NULL)
 		goto out;
@@ -221,39 +287,39 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		 * Gather the upper and lower sensor reading thresholds, if
 		 * available.
 		 */
-		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
-		    TOPO_PROP_THRESHOLD_LNC, &(sensor->hwsen_thresh_lnc),
-		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
+		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_LNC,
+		    &(sensor->hwsen_thresh_lnc)) != 0) {
 			free(sensor);
 			goto out;
 		}
-		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
-		    TOPO_PROP_THRESHOLD_LCR, &(sensor->hwsen_thresh_lcr),
-		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
+		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_LCR,
+		    &(sensor->hwsen_thresh_lcr)) != 0) {
 			free(sensor);
 			goto out;
 		}
-		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
-		    TOPO_PROP_THRESHOLD_LNR, &(sensor->hwsen_thresh_lnr),
-		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
+		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_LNR,
+		    &(sensor->hwsen_thresh_lnr)) != 0) {
 			free(sensor);
 			goto out;
 		}
-		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
-		    TOPO_PROP_THRESHOLD_UNC, &(sensor->hwsen_thresh_unc),
-		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
+		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_UNC,
+		    &(sensor->hwsen_thresh_unc)) != 0) {
 			free(sensor);
 			goto out;
 		}
-		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
-		    TOPO_PROP_THRESHOLD_UCR, &(sensor->hwsen_thresh_ucr),
-		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
+		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_UCR,
+		    &(sensor->hwsen_thresh_ucr)) != 0) {
 			free(sensor);
 			goto out;
 		}
-		if (topo_prop_get_double(fp->tf_node, TOPO_PGROUP_FACILITY,
-		    TOPO_PROP_THRESHOLD_UNR, &(sensor->hwsen_thresh_unr),
-		    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
+		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_UNR,
+		    &(sensor->hwsen_thresh_unr)) != 0) {
 			free(sensor);
 			goto out;
 		}
@@ -364,9 +430,8 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 		free(disk);
 		return (-1);
 	}
-	if (topo_prop_get_uint32(node, TOPO_PGROUP_STORAGE, "speed-in-rpm",
-	    &disk->hwdk_speed, &err) != 0 &&
-	    err != ETOPO_PROP_NOENT) {
+	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_STORAGE,
+	    "speed-in-rpm", &disk->hwdk_speed) != 0) {
 		free(disk);
 		return (-1);
 	}
@@ -514,9 +579,9 @@ grok_slot(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_dimm_slot_t *slot;
 	uint32_t slottype;
 	int err;
-	
+
 	hwg_debug("Found slot\n");
-	
+
 	/*
 	 * If it's not a DIMM slot, skip it.
 	 */
@@ -575,33 +640,32 @@ grok_pcifn(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_debug("Found PCI(EX) function\n");
 	pcidev = cbarg->cb_currdev;
 	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_VENDNM,
-	    &(pcidev->hwpci_vendor), &err) != 0 &&
+	    &pcidev->hwpci_vendor, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
 		return (-1);
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_DEVNM,
-	    &(pcidev->hwpci_devnm), &err) != 0 &&
+	    &pcidev->hwpci_devnm, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
 		return (-1);
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_SUBSYSNM,
-	    &(pcidev->hwpci_subsysnm), &err) != 0 &&
+	    &pcidev->hwpci_subsysnm, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
 		return (-1);
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DEV,
-	    &(pcidev->hwpci_devpath), &err) != 0 &&
+	    &pcidev->hwpci_devpath, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
 		return (-1);
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DRIVER,
-	    &(pcidev->hwpci_drivernm), &err) != 0 &&
+	    &pcidev->hwpci_drivernm, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
 		return (-1);
 	}
-	if (topo_prop_get_uint32(node, TOPO_PGROUP_IO, TOPO_IO_INSTANCE,
-	    &(pcidev->hwpci_driverinst), &err) != 0 &&
-	    err != ETOPO_PROP_NOENT) {
+	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_IO,
+	    TOPO_IO_INSTANCE, &pcidev->hwpci_driverinst) != 0) {
 		return (-1);
 	}
 

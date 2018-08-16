@@ -22,7 +22,34 @@
 extern void hwg_debug(const char *, ...);
 extern void hwg_error(const char *, ...);
 
+/*
+ * For numeric topo property types, we need to be able to distinguish between
+ * valid zero values versus values that aren't set because the property wasn't
+ * present.  So we define the following type to capture both the property value
+ * and whether or not it was actually set.   This type can be used for cases
+ * where it is possible that a topo property may not exist - for example, we're
+ * on a version of the software that pre-dates the introduction of the
+ * property.
+ *
+ * As new, numeric properties are added to topo nodes, they should be surfaced
+ * in hwgrok using this type, so as to maintain backward compatibility with
+ * older software versions.
+ */
+typedef struct hwg_numeric_prop
+{
+	union {
+		uint32_t	hnp_u32;
+		int32_t		hnp_i32;
+		uint64_t	hnp_u64;
+		int64_t		hnp_i64;
+		double		hnp_dbl;
+	};
+	topo_type_t hnp_type;
+	boolean_t hnp_is_set;
+} hwg_numeric_prop_t;
+
 typedef struct hwg_common_info {
+	char *hwci_fmri;
 	char *hwci_manufacturer;
 	char *hwci_model;
 	char *hwci_part;
@@ -46,12 +73,12 @@ typedef struct hwg_sensor {
 	boolean_t hwsen_hasreading;
 	boolean_t hwsen_hasstate;
 	double hwsen_reading;
-	double hwsen_thresh_lnc;
-	double hwsen_thresh_lcr;
-	double hwsen_thresh_lnr;
-	double hwsen_thresh_unc;
-	double hwsen_thresh_ucr;
-	double hwsen_thresh_unr;
+	hwg_numeric_prop_t hwsen_thresh_lnc;
+	hwg_numeric_prop_t hwsen_thresh_lcr;
+	hwg_numeric_prop_t hwsen_thresh_lnr;
+	hwg_numeric_prop_t hwsen_thresh_unc;
+	hwg_numeric_prop_t hwsen_thresh_ucr;
+	hwg_numeric_prop_t hwsen_thresh_unr;
 } hwg_sensor_t;
 
 typedef struct hwg_led {
@@ -92,7 +119,7 @@ typedef struct hwg_disk {
 	struct llist *ll_next;
 	hwg_common_info_t hwdk_common_info;
 	uint64_t hwdk_size;
-	uint32_t hwdk_speed;
+	hwg_numeric_prop_t hwdk_speed;
 } hwg_disk_t;
 
 typedef struct hwg_disk_bay {
@@ -112,7 +139,7 @@ typedef struct hwg_pcidev {
 	char *hwpci_subsysnm;
 	char *hwpci_devpath;
 	char *hwpci_drivernm;
-	uint_t hwpci_driverinst;
+	hwg_numeric_prop_t hwpci_driverinst;
 	boolean_t hwpci_is_onboard;
 } hwg_pcidev_t;
 

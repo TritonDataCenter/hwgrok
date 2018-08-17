@@ -138,6 +138,39 @@ hwg_get_prop(tnode_t *node, topo_type_t ptype, const char *pgrp,
 	return (0);
 }
 
+/*
+ * This routine takes a string containing an HC-scheme FMRI and returns
+ * a new string with the authority portion of the FMRI stripped out.  We
+ * do this to make the FMRI more readable and because the HW identity
+ * information in the authority is already represented by other object
+ * properties and thus is redundant.
+ *
+ * Caller is responsible for freeing returned string.
+ */
+static char *
+hwg_fmri_strip(const char *fmri)
+{
+	char *stripped = NULL, *fmriend;
+
+	/*
+	 * HC scheme FMRI's have the format:
+	 *  hc://<authority>/<hc-name>=<hc-inst>...
+	 *
+	 * So we want the part of the FMRI after the 3rd "/"
+	 */
+	fmriend = strstr(fmri + 5, "/");
+	if (fmriend == NULL) {
+		hwg_error("%s: malformed FMRI", __func__);
+		return (NULL);
+	}
+	if (asprintf(&stripped, "hc://%s", fmriend) < 0) {
+		hwg_error("%s: failed to alloc string (%s)", __func__,
+		    strerror(errno));
+		return (NULL);
+	}
+	return (stripped);
+}
+
 static void
 get_sensor_type(uint32_t reading_type, uint32_t units, char **typestr)
 {
@@ -187,16 +220,15 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 {
 	int err, ret = 0;
 	nvlist_t *fmri = NULL;
-	char *val, buf[64];
+	char *val, *fmristr = NULL, buf[64];
 	topo_faclist_t sensorlist = { 0 }, ledlist = { 0 }, *fp;
 
 	if (topo_node_resource(node, &fmri, &err) != 0 ||
-	    topo_fmri_nvl2str(thp, fmri, &(cinfo->hwci_fmristr), &err) != 0) {
+	    topo_fmri_nvl2str(thp, fmri, &fmristr, &err) != 0 ||
+	    (cinfo->hwci_fmri = hwg_fmri_strip(fmristr)) == NULL) {
 		goto out;
 	}
-	if (topo_fmri_nvl2str(thp, fmri, &cinfo->hwci_fmri, &err) != 0) {
-		goto out;
-	}
+
 	if (nvlist_lookup_string(fmri, FM_FMRI_HC_SERIAL_ID, &val) == 0 &&
 	    (cinfo->hwci_serial = strdup(val)) == NULL)
 		goto out;
@@ -356,6 +388,7 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 	}
 	ret = 0;
 out:
+	topo_hdl_strfree(thp, fmristr);
 	nvlist_free(fmri);
 	while ((fp = topo_list_next(&sensorlist.tf_list)) != NULL) {
 		topo_list_delete(&sensorlist.tf_list, fp);

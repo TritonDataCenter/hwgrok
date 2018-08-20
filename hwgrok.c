@@ -199,6 +199,12 @@ get_sensor_type(uint32_t reading_type, uint32_t units, char **typestr)
 	case TOPO_SENSOR_UNITS_VOLTS:
 		*typestr = strdup("voltage");
 		break;
+	case TOPO_SENSOR_UNITS_AMPS:
+		*typestr = strdup("current");
+		break;
+	case TOPO_SENSOR_UNITS_WATTS:
+		*typestr = strdup("power consumption");
+		break;
 	default:
 		*typestr = strdup("unknown");
 	}

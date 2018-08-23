@@ -40,6 +40,9 @@
 #define	PCI_SUBSYS_NAME		"pci-subsystem-name"
 #define	PCI_VENDOR_NAME		"pci-vendor-name"
 #define	PROCESSORS		"processors"
+#define	PROC_FAMILY		"processor-family"
+#define	PROC_MODEL		"processor-model"
+#define	PROC_STEPPING		"processor-stepping"
 #define	PSUS			"power-supplies"
 #define	READING			"reading"
 #define	SENSORS			"sensors"
@@ -304,6 +307,9 @@ dump_processor_json(llist_t *node, void *arg)
 	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
 	(void) printf("\"%s\":\"%s\",", MODEL, model);
 
+	(void) printf("\"%s\":\"%u\",", PROC_FAMILY, chip->hwpr_family);
+	(void) printf("\"%s\":\"%u\",", PROC_MODEL, chip->hwpr_model);
+	(void) printf("\"%s\":\"%u\",", PROC_STEPPING, chip->hwpr_stepping);
 	(void) printf("\"%s\":%u,", NUM_CORES, chip->hwpr_num_cores);
 	(void) printf("\"%s\":%u,", NUM_THREADS,
 	    (chip->hwpr_num_threads / chip->hwpr_num_cores));

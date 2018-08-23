@@ -489,6 +489,7 @@ grok_strand(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
 
 	cbarg->cb_currchip->hwpr_num_threads++;
+	return (0);
 }
 
 static int
@@ -497,6 +498,7 @@ grok_core(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
 
 	cbarg->cb_currchip->hwpr_num_cores++;
+	return (0);
 }
 
 static int
@@ -505,13 +507,15 @@ grok_chip(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_processor_t *processor;
+	char *vendor = NULL;
+	int err;
 
 	hwg_debug("Found processor\n");
 	if ((processor = hwg_zalloc(sizeof (hwg_processor_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
-	if (get_common_props(thp, node, &(processor->hwpr_common_info)) != 0) {
+	if (get_common_props(thp, node, &processor->hwpr_common_info) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		free(processor);
@@ -519,6 +523,33 @@ grok_chip(topo_hdl_t *thp, tnode_t *node, void *arg)
 	}
 	llist_append(&(hwinfo->hwi_processors), processor);
 	cbarg->cb_currchip = processor;
+
+	if (topo_prop_get_int32(node, "chip-properties", "family",
+	    &processor->hwpr_family, &err) != 0 ||
+	    topo_prop_get_int32(node, "chip-properties", "model",
+	    &processor->hwpr_model, &err) != 0 ||
+	    topo_prop_get_int32(node, "chip-properties", "stepping",
+	    &processor->hwpr_stepping, &err) != 0) {
+		hwg_error("required chip node properties missing on node: "
+		    "%s=%d", cbarg->cb_nodename, cbarg->cb_nodeinst);
+		return (-1);
+	}
+	if (topo_prop_get_string(node, "chip-properties", "vendor_id", &vendor,
+	    &err) != 0 && err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	if (vendor == NULL)
+		return (0);
+	else if (strcmp(vendor, "GenuineIntel") == 0)
+		processor->hwpr_common_info.hwci_manufacturer =
+		    strdup("Intel");
+	else if (strcmp(vendor, "AuthenticAMD") == 0)
+		processor->hwpr_common_info.hwci_manufacturer = strdup("AMD");
+	else
+		processor->hwpr_common_info.hwci_manufacturer = strdup(vendor);
+
+	topo_hdl_strfree(thp, vendor);
+
 	return (0);
 }
 

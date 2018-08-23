@@ -95,6 +95,9 @@ typedef struct hwg_processor {
 	uint_t hwpr_num_cores;
 	uint_t hwpr_num_threads;
 	uint_t hwpr_speed;
+	uint_t hwpr_family;
+	uint_t hwpr_model;
+	uint_t hwpr_stepping;
 } hwg_processor_t;
 
 typedef struct hwg_dimm {

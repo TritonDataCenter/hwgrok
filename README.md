@@ -7,6 +7,7 @@ Sample output:
 # ./hwgrok | json
 {
   "chassis": {
+    "hc-fmri": "hc:///chassis=0",
     "manufacturer": "unknown",
     "model": "unknown",
     "sensors": [
@@ -15,7 +16,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 35,
+        "reading": 34,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -39,6 +40,7 @@ Sample output:
     ]
   },
   "service-processor": {
+    "hc-fmri": "hc:///motherboard=0/sp=0",
     "firmware-revision": "1.40",
     "ipv4-address": "172.20.1.28",
     "ipv4-subnet": "255.255.254.0",
@@ -46,6 +48,7 @@ Sample output:
     "ipv4-config-type": "dhcp"
   },
   "motherboard": {
+    "hc-fmri": "hc:///motherboard=0",
     "manufacturer": "Supermicro",
     "model": "unknown",
     "firmware-revision": "1.01",
@@ -55,7 +58,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 59,
+        "reading": 58,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -69,7 +72,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 56,
+        "reading": 50,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -83,7 +86,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 62,
+        "reading": 56,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -97,7 +100,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 45,
+        "reading": 43,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -111,7 +114,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 52,
+        "reading": 51,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -125,7 +128,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 43,
+        "reading": 42,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -139,7 +142,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 48,
+        "reading": 46,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -153,7 +156,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 51,
+        "reading": 48,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -167,7 +170,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 40,
+        "reading": 39,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -181,7 +184,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 51,
+        "reading": 48,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -195,7 +198,7 @@ Sample output:
         "type": "temperature",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 44,
+        "reading": 43,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -237,7 +240,7 @@ Sample output:
         "type": "voltage",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 3.418,
+        "reading": 3.435,
         "units": "VOLTS",
         "threshold-lower-non-critical": 2.959,
         "threshold-lower-critical": 2.823,
@@ -271,7 +274,7 @@ Sample output:
         "type": "voltage",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 1.881,
+        "reading": 1.89,
         "units": "VOLTS",
         "threshold-lower-non-critical": 1.404,
         "threshold-lower-critical": 1.26,
@@ -299,7 +302,7 @@ Sample output:
         "type": "voltage",
         "state": 192,
         "state-description": "0xc0",
-        "reading": 3.486,
+        "reading": 3.503,
         "units": "VOLTS",
         "threshold-lower-non-critical": 2.959,
         "threshold-lower-critical": 2.891,
@@ -355,18 +358,28 @@ Sample output:
   },
   "processors": [
     {
-      "label": "(null)",
-      "manufacturer": "unknown",
+      "label": "unknown",
+      "hc-fmri": "hc:///motherboard=0/chip=0",
+      "manufacturer": "Intel",
       "model": "unknown",
+      "processor-brand": "Intel(r) Xeon(r) Gold 6132 CPU @ 2.60GHz",
+      "processor-family": "6",
+      "processor-model": "85",
+      "processor-stepping": "4",
       "number-of-cores": 14,
       "number-of-threads-per-core": 2,
       "sensors": [],
       "leds": []
     },
     {
-      "label": "(null)",
-      "manufacturer": "unknown",
+      "label": "unknown",
+      "hc-fmri": "hc:///motherboard=0/chip=1",
+      "manufacturer": "Intel",
       "model": "unknown",
+      "processor-brand": "Intel(r) Xeon(r) Gold 6132 CPU @ 2.60GHz",
+      "processor-family": "6",
+      "processor-model": "85",
+      "processor-stepping": "4",
       "number-of-cores": 14,
       "number-of-threads-per-core": 2,
       "sensors": [],
@@ -376,7 +389,9 @@ Sample output:
   "memory": [
     {
       "label": "P1-DIMMA1",
+      "hc-fmri": "hc:///motherboard=0/slot=0",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=0/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "362BC882",
@@ -403,7 +418,9 @@ Sample output:
     },
     {
       "label": "P1-DIMMA2",
+      "hc-fmri": "hc:///motherboard=0/slot=1",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=1/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "36246BC4",
@@ -412,6 +429,35 @@ Sample output:
         "sensors": [
           {
             "name": "P1-DIMMA2 Temp",
+            "type": "temperature",
+            "state": 192,
+            "state-description": "0xc0",
+            "reading": 37,
+            "units": "DEGREES_C",
+            "threshold-lower-non-critical": 10,
+            "threshold-lower-critical": 5,
+            "threshold-lower-non-recoverable": 5,
+            "threshold-upper-non-critical": 80,
+            "threshold-upper-critical": 85,
+            "threshold-upper-non-recoverable": 90
+          }
+        ],
+        "leds": []
+      }
+    },
+    {
+      "label": "P1-DIMMB1",
+      "hc-fmri": "hc:///motherboard=0/slot=2",
+      "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=2/dimm=0",
+        "manufacturer": "Samsung",
+        "part-number": "M393A4K40BB2-CTD",
+        "serial-number": "36246309",
+        "type": "DDR4",
+        "size-in-bytes": "34359738368",
+        "sensors": [
+          {
+            "name": "P1-DIMMB1 Temp",
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
@@ -429,16 +475,18 @@ Sample output:
       }
     },
     {
-      "label": "P1-DIMMB1",
+      "label": "P1-DIMMC1",
+      "hc-fmri": "hc:///motherboard=0/slot=3",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=3/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "36246309",
+        "serial-number": "36246BC0",
         "type": "DDR4",
         "size-in-bytes": "34359738368",
         "sensors": [
           {
-            "name": "P1-DIMMB1 Temp",
+            "name": "P1-DIMMC1 Temp",
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
@@ -456,16 +504,47 @@ Sample output:
       }
     },
     {
-      "label": "P1-DIMMC1",
+      "label": "P1-DIMMD1",
+      "hc-fmri": "hc:///motherboard=0/slot=4",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=4/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "36246BC0",
+        "serial-number": "362BBB9F",
         "type": "DDR4",
         "size-in-bytes": "34359738368",
         "sensors": [
           {
-            "name": "P1-DIMMC1 Temp",
+            "name": "P1-DIMMD1 Temp",
+            "type": "temperature",
+            "state": 192,
+            "state-description": "0xc0",
+            "reading": 44,
+            "units": "DEGREES_C",
+            "threshold-lower-non-critical": 10,
+            "threshold-lower-critical": 5,
+            "threshold-lower-non-recoverable": 5,
+            "threshold-upper-non-critical": 80,
+            "threshold-upper-critical": 85,
+            "threshold-upper-non-recoverable": 90
+          }
+        ],
+        "leds": []
+      }
+    },
+    {
+      "label": "P1-DIMMD2",
+      "hc-fmri": "hc:///motherboard=0/slot=5",
+      "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=5/dimm=0",
+        "manufacturer": "Samsung",
+        "part-number": "M393A4K40BB2-CTD",
+        "serial-number": "362BC781",
+        "type": "DDR4",
+        "size-in-bytes": "34359738368",
+        "sensors": [
+          {
+            "name": "P1-DIMMD2 Temp",
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
@@ -483,62 +562,10 @@ Sample output:
       }
     },
     {
-      "label": "P1-DIMMD1",
-      "dimm": {
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BBB9F",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMD1 Temp",
-            "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 45,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "P1-DIMMD2",
-      "dimm": {
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BC781",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMD2 Temp",
-            "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 42,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
       "label": "P1-DIMME1",
+      "hc-fmri": "hc:///motherboard=0/slot=6",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=6/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "362468CC",
@@ -550,7 +577,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 50,
+            "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -565,7 +592,9 @@ Sample output:
     },
     {
       "label": "P1-DIMMF1",
+      "hc-fmri": "hc:///motherboard=0/slot=7",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=7/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "362BDCBA",
@@ -577,7 +606,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 49,
+            "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -592,7 +621,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMA1",
+      "hc-fmri": "hc:///motherboard=0/slot=8",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=8/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "35808F99",
@@ -604,7 +635,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 49,
+            "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -619,7 +650,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMA2",
+      "hc-fmri": "hc:///motherboard=0/slot=9",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=9/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "34EE8887",
@@ -631,7 +664,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 50,
+            "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -646,7 +679,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMB1",
+      "hc-fmri": "hc:///motherboard=0/slot=10",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=10/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "35808FF1",
@@ -658,7 +693,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 50,
+            "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -673,7 +708,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMC1",
+      "hc-fmri": "hc:///motherboard=0/slot=11",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=11/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "34EE7E63",
@@ -685,7 +722,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 49,
+            "reading": 47,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -700,7 +737,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMD1",
+      "hc-fmri": "hc:///motherboard=0/slot=12",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=12/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "34EE88C1",
@@ -712,7 +751,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 42,
+            "reading": 41,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -727,7 +766,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMD2",
+      "hc-fmri": "hc:///motherboard=0/slot=13",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=13/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "34EE8821",
@@ -754,7 +795,9 @@ Sample output:
     },
     {
       "label": "P2-DIMME1",
+      "hc-fmri": "hc:///motherboard=0/slot=14",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=14/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "34EE8882",
@@ -766,7 +809,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 41,
+            "reading": 40,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -781,7 +824,9 @@ Sample output:
     },
     {
       "label": "P2-DIMMF1",
+      "hc-fmri": "hc:///motherboard=0/slot=15",
       "dimm": {
+        "hc-fmri": "hc:///motherboard=0/slot=15/dimm=0",
         "manufacturer": "Samsung",
         "part-number": "M393A4K40BB2-CTD",
         "serial-number": "362BBD60",
@@ -793,7 +838,7 @@ Sample output:
             "type": "temperature",
             "state": 192,
             "state-description": "0xc0",
-            "reading": 39,
+            "reading": 38,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -810,6 +855,7 @@ Sample output:
   "pci-devices": [
     {
       "label": "CPU1 SLOT 1 PCI-E 3.0 X8",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=1/pciexrc=1/pciexbus=2/pciexdev=0",
       "pci-vendor-name": "ASPEED Technology, Inc.",
       "pci-device-name": "AST1150 PCI-to-PCI Bridge",
       "pci-subsystem-name": "unknown",
@@ -819,6 +865,7 @@ Sample output:
     },
     {
       "label": "CPU1 SLOT 1 PCI-E 3.0 X8",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=1/pciexrc=1/pciexbus=2/pciexdev=0/pciexfn=0/pcibus=3/pcidev=0",
       "pci-vendor-name": "ASPEED Technology, Inc.",
       "pci-device-name": "ASPEED Graphics Family",
       "pci-subsystem-name": "unknown",
@@ -828,6 +875,7 @@ Sample output:
     },
     {
       "label": "CPU1 SLOT 1 PCI-E 3.0 X8",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=2/pciexrc=2/pciexbus=24/pciexdev=0",
       "pci-vendor-name": "Intel Corporation",
       "pci-device-name": "unknown",
       "pci-subsystem-name": "unknown",
@@ -837,6 +885,7 @@ Sample output:
     },
     {
       "label": "CPU1 SLOT 1 PCI-E 3.0 X8",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=2/pciexrc=2/pciexbus=24/pciexdev=0/pciexfn=0/pciexbus=25/pciexdev=3",
       "pci-vendor-name": "Intel Corporation",
       "pci-device-name": "unknown",
       "pci-subsystem-name": "unknown",
@@ -846,15 +895,17 @@ Sample output:
     },
     {
       "label": "CPU1 SLOT 1 PCI-E 3.0 X8",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=2/pciexrc=2/pciexbus=24/pciexdev=0/pciexfn=0/pciexbus=25/pciexdev=3/pciexfn=0/pciexbus=26/pciexdev=0",
       "pci-vendor-name": "Intel Corporation",
       "pci-device-name": "Ethernet Connection X722 for 10GBASE-T",
       "pci-subsystem-name": "unknown",
       "device-driver-name": "i40e",
-      "device-driver-instance": 3,
+      "device-driver-instance": 1,
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0/pci8086,37c5@3/pci15d9,37d2@0,1"
     },
     {
       "label": "CPU2 SLOT 2 PCI-E 3.0 X16",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=3/pciexrc=3/pciexbus=28/pciexdev=0",
       "pci-vendor-name": "Intel Corporation",
       "pci-device-name": "82574L Gigabit Network Connection",
       "pci-subsystem-name": "Gigabit CT Desktop Adapter",
@@ -863,54 +914,40 @@ Sample output:
       "device-path": "/pci@14,0/pci8086,2032@2/pci8086,a01f@0"
     },
     {
-      "label": "CPU2 SLOT 4 PCI-E 3.0 X16",
-      "pci-vendor-name": "Intel Corporation",
-      "pci-device-name": "Ethernet Controller XXV710 for 25GbE SFP28",
-      "pci-subsystem-name": "Ethernet Network Adapter XXV710",
-      "device-driver-name": "i40e",
-      "device-driver-instance": 1,
-      "device-path": "/pci@33,0/pci8086,2032@2/pci8086,0@0,1"
-    },
-    {
       "label": "CPU1 SLOT 7 PCI-E 3.0 X8",
-      "pci-vendor-name": "LSI Logic / Symbios Logic",
-      "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
-      "pci-subsystem-name": "unknown",
-      "device-driver-name": "mpt_sas",
-      "device-driver-instance": 1,
-      "device-path": "/pci@55,0/pci8086,2030@0/pci15d9,808@0"
-    },
-    {
-      "label": "CPU1 SLOT 3 PCI-E 3.0 X8",
-      "pci-vendor-name": "LSI Logic / Symbios Logic",
-      "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
-      "pci-subsystem-name": "unknown",
-      "device-driver-name": "mpt_sas",
-      "device-driver-instance": 0,
-      "device-path": "/pci@7c,0/pci8086,2030@0/pci15d9,808@0"
-    },
-    {
-      "label": "CPU1 SLOT 6 PCI-E 3.0 X8",
-      "pci-vendor-name": "Chelsio Communications Inc",
-      "pci-device-name": "T62100-LP-CR Unified Wire Storage Controller",
-      "pci-subsystem-name": "unknown",
-      "device-driver-name": "t4nex",
-      "device-driver-instance": 0,
-      "device-path": "/pci@a4,0/pci8086,2030@0/pci1425,0@0,6"
-    },
-    {
-      "label": "CPU2 SLOT 5 PCI-E 3.0 X16",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=4/pciexrc=4/pciexbus=94/pciexdev=0",
       "pci-vendor-name": "LSI Logic / Symbios Logic",
       "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
       "pci-subsystem-name": "unknown",
       "device-driver-name": "mpt_sas",
       "device-driver-instance": 2,
-      "device-path": "/pci@cc,0/pci8086,2030@0/pci15d9,808@0"
+      "device-path": "/pci@56,0/pci8086,2030@0/pci15d9,808@0"
+    },
+    {
+      "label": "CPU1 SLOT 3 PCI-E 3.0 X8",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=5/pciexrc=5/pciexbus=134/pciexdev=0",
+      "pci-vendor-name": "LSI Logic / Symbios Logic",
+      "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
+      "pci-subsystem-name": "unknown",
+      "device-driver-name": "mpt_sas",
+      "device-driver-instance": 1,
+      "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0"
+    },
+    {
+      "label": "CPU2 SLOT 5 PCI-E 3.0 X16",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=6/pciexrc=6/pciexbus=216/pciexdev=0",
+      "pci-vendor-name": "LSI Logic / Symbios Logic",
+      "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
+      "pci-subsystem-name": "unknown",
+      "device-driver-name": "mpt_sas",
+      "device-driver-instance": 0,
+      "device-path": "/pci@ce,0/pci8086,2030@0/pci15d9,808@0"
     }
   ],
   "drive-bays": [
     {
       "label": "Front Disk 0",
+      "hc-fmri": "hc:///chassis=0/bay=0",
       "sensors": [],
       "leds": [
         {
@@ -927,17 +964,17 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=0/disk=0",
         "manufacturer": "HGST",
         "model": "HUSMH8010BSS204",
         "serial-number": "0HWZDBUA",
         "firmware-revision": "C360",
         "size-in-bytes": 1245995008,
-        "speed-in-rpm": 0,
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 30,
+            "reading": 29,
             "units": "DEGREES_C"
           }
         ],
@@ -946,6 +983,7 @@ Sample output:
     },
     {
       "label": "Front Disk 1",
+      "hc-fmri": "hc:///chassis=0/bay=1",
       "sensors": [],
       "leds": [
         {
@@ -962,6 +1000,7 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=1/disk=0",
         "manufacturer": "HGST",
         "model": "HUC101818CS4200",
         "serial-number": "08V1ERBH",
@@ -972,7 +1011,7 @@ Sample output:
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 39,
+            "reading": 38,
             "units": "DEGREES_C"
           }
         ],
@@ -981,6 +1020,7 @@ Sample output:
     },
     {
       "label": "Front Disk 2",
+      "hc-fmri": "hc:///chassis=0/bay=2",
       "sensors": [],
       "leds": [
         {
@@ -997,6 +1037,7 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=2/disk=0",
         "manufacturer": "HGST",
         "model": "HUC101818CS4200",
         "serial-number": "08GAGYSZ",
@@ -1007,7 +1048,7 @@ Sample output:
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 41,
+            "reading": 40,
             "units": "DEGREES_C"
           }
         ],
@@ -1016,6 +1057,7 @@ Sample output:
     },
     {
       "label": "Front Disk 3",
+      "hc-fmri": "hc:///chassis=0/bay=3",
       "sensors": [],
       "leds": [
         {
@@ -1032,6 +1074,7 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=3/disk=0",
         "manufacturer": "HGST",
         "model": "HUC101818CS4200",
         "serial-number": "08V134VH",
@@ -1042,7 +1085,7 @@ Sample output:
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 41,
+            "reading": 40,
             "units": "DEGREES_C"
           }
         ],
@@ -1051,6 +1094,7 @@ Sample output:
     },
     {
       "label": "Front Disk 4",
+      "hc-fmri": "hc:///chassis=0/bay=4",
       "sensors": [],
       "leds": [
         {
@@ -1067,6 +1111,7 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=4/disk=0",
         "manufacturer": "HGST",
         "model": "HUC101818CS4200",
         "serial-number": "08V1EUPH",
@@ -1086,6 +1131,7 @@ Sample output:
     },
     {
       "label": "Front Disk 5",
+      "hc-fmri": "hc:///chassis=0/bay=5",
       "sensors": [],
       "leds": [
         {
@@ -1102,324 +1148,10 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=5/disk=0",
         "manufacturer": "HGST",
         "model": "HUC101818CS4200",
         "serial-number": "08V19J2H",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 42,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 6",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08V19H2H",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 42,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 7",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08G81PYZ",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 43,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 8",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08GAMP6Z",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 43,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 9",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08VHWX3A",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 43,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 10",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08V19HHH",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 43,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 11",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08VHWEGA",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 43,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 12",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08VHXBMA",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 43,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 13",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08VHXDGA",
-        "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
-        "speed-in-rpm": 10520,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "TEMP",
-            "reading": 42,
-            "units": "DEGREES_C"
-          }
-        ],
-        "leds": []
-      }
-    },
-    {
-      "label": "Front Disk 14",
-      "sensors": [],
-      "leds": [
-        {
-          "type": "SERVICE",
-          "mode": "off"
-        },
-        {
-          "type": "LOCATE",
-          "mode": "off"
-        },
-        {
-          "type": "OK2RM",
-          "mode": "off"
-        }
-      ],
-      "disk": {
-        "manufacturer": "HGST",
-        "model": "HUC101818CS4200",
-        "serial-number": "08V1349H",
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
@@ -1435,7 +1167,8 @@ Sample output:
       }
     },
     {
-      "label": "Front Disk 15",
+      "label": "Front Disk 6",
+      "hc-fmri": "hc:///chassis=0/bay=6",
       "sensors": [],
       "leds": [
         {
@@ -1452,9 +1185,10 @@ Sample output:
         }
       ],
       "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=6/disk=0",
         "manufacturer": "HGST",
         "model": "HUC101818CS4200",
-        "serial-number": "08V19G8H",
+        "serial-number": "08V19H2H",
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
@@ -1462,7 +1196,7 @@ Sample output:
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 40,
+            "reading": 41,
             "units": "DEGREES_C"
           }
         ],
@@ -1470,7 +1204,93 @@ Sample output:
       }
     },
     {
+      "label": "Front Disk 7",
+      "hc-fmri": "hc:///chassis=0/bay=7",
+      "sensors": [],
+      "leds": [
+        {
+          "type": "SERVICE",
+          "mode": "off"
+        },
+        {
+          "type": "LOCATE",
+          "mode": "off"
+        },
+        {
+          "type": "OK2RM",
+          "mode": "off"
+        }
+      ],
+      "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=7/disk=0",
+        "manufacturer": "HGST",
+        "model": "HUC101818CS4200",
+        "serial-number": "08G81PYZ",
+        "firmware-revision": "ADB0",
+        "size-in-bytes": 1706716160,
+        "speed-in-rpm": 10520,
+        "sensors": [
+          {
+            "name": "temp",
+            "type": "TEMP",
+            "reading": 42,
+            "units": "DEGREES_C"
+          }
+        ],
+        "leds": []
+      }
+    },
+    {
+      "label": "Front Disk 8",
+      "hc-fmri": "hc:///chassis=0/bay=8",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 9",
+      "hc-fmri": "hc:///chassis=0/bay=9",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 10",
+      "hc-fmri": "hc:///chassis=0/bay=10",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 11",
+      "hc-fmri": "hc:///chassis=0/bay=11",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 12",
+      "hc-fmri": "hc:///chassis=0/bay=12",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 13",
+      "hc-fmri": "hc:///chassis=0/bay=13",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 14",
+      "hc-fmri": "hc:///chassis=0/bay=14",
+      "sensors": [],
+      "leds": []
+    },
+    {
+      "label": "Front Disk 15",
+      "hc-fmri": "hc:///chassis=0/bay=15",
+      "sensors": [],
+      "leds": []
+    },
+    {
       "label": "Front Disk 16",
+      "hc-fmri": "hc:///chassis=0/bay=16",
       "sensors": [],
       "leds": [
         {
@@ -1489,6 +1309,7 @@ Sample output:
     },
     {
       "label": "Front Disk 17",
+      "hc-fmri": "hc:///chassis=0/bay=17",
       "sensors": [],
       "leds": [
         {
@@ -1507,6 +1328,7 @@ Sample output:
     },
     {
       "label": "Front Disk 18",
+      "hc-fmri": "hc:///chassis=0/bay=18",
       "sensors": [],
       "leds": [
         {
@@ -1525,6 +1347,7 @@ Sample output:
     },
     {
       "label": "Front Disk 19",
+      "hc-fmri": "hc:///chassis=0/bay=19",
       "sensors": [],
       "leds": [
         {
@@ -1543,6 +1366,7 @@ Sample output:
     },
     {
       "label": "Front Disk 20",
+      "hc-fmri": "hc:///chassis=0/bay=20",
       "sensors": [],
       "leds": [
         {
@@ -1561,6 +1385,7 @@ Sample output:
     },
     {
       "label": "Front Disk 21",
+      "hc-fmri": "hc:///chassis=0/bay=21",
       "sensors": [],
       "leds": [
         {
@@ -1579,6 +1404,7 @@ Sample output:
     },
     {
       "label": "Front Disk 22",
+      "hc-fmri": "hc:///chassis=0/bay=22",
       "sensors": [],
       "leds": [
         {
@@ -1597,6 +1423,7 @@ Sample output:
     },
     {
       "label": "Front Disk 23",
+      "hc-fmri": "hc:///chassis=0/bay=23",
       "sensors": [],
       "leds": [
         {
@@ -1615,28 +1442,13 @@ Sample output:
     },
     {
       "label": "Rear Disk 0",
+      "hc-fmri": "hc:///chassis=0/bay=24",
       "sensors": [],
-      "leds": [],
-      "disk": {
-        "manufacturer": "INTEL",
-        "model": "SSDSC2CW120A3",
-        "serial-number": "CVCV20240AEL120BGN",
-        "firmware-revision": "400i",
-        "size-in-bytes": 4070006784,
-        "speed-in-rpm": 0,
-        "sensors": [
-          {
-            "name": "temp",
-            "type": "(null)",
-            "reading": 0,
-            "units": "(null)"
-          }
-        ],
-        "leds": []
-      }
+      "leds": []
     },
     {
       "label": "Rear Disk 1",
+      "hc-fmri": "hc:///chassis=0/bay=25",
       "sensors": [],
       "leds": []
     }
@@ -1644,6 +1456,7 @@ Sample output:
   "power-supplies": [
     {
       "label": "PSU 0",
+      "hc-fmri": "hc:///chassis=0/psu=0",
       "manufacturer": "unknown",
       "model": "unknown",
       "firmware-revision": "unknown",
@@ -1659,6 +1472,7 @@ Sample output:
     },
     {
       "label": "PSU 1",
+      "hc-fmri": "hc:///chassis=0/psu=1",
       "manufacturer": "unknown",
       "model": "unknown",
       "firmware-revision": "unknown",
@@ -1676,13 +1490,14 @@ Sample output:
   "fans": [
     {
       "label": "FAN 0",
+      "hc-fmri": "hc:///chassis=0/fan=0",
       "sensors": [
         {
           "name": "FAN1",
           "type": "speed",
           "state": 192,
           "state-description": "0xc0",
-          "reading": 3000,
+          "reading": 2800,
           "units": "RPM",
           "threshold-lower-non-critical": 700,
           "threshold-lower-critical": 500,
@@ -1696,13 +1511,14 @@ Sample output:
     },
     {
       "label": "FAN 1",
+      "hc-fmri": "hc:///chassis=0/fan=1",
       "sensors": [
         {
           "name": "FAN2",
           "type": "speed",
           "state": 192,
           "state-description": "0xc0",
-          "reading": 3100,
+          "reading": 2900,
           "units": "RPM",
           "threshold-lower-non-critical": 700,
           "threshold-lower-critical": 500,
@@ -1716,33 +1532,38 @@ Sample output:
     },
     {
       "label": "FAN 2",
+      "hc-fmri": "hc:///chassis=0/fan=2",
       "sensors": [],
       "leds": []
     },
     {
       "label": "FAN 3",
+      "hc-fmri": "hc:///chassis=0/fan=3",
       "sensors": [],
       "leds": []
     },
     {
       "label": "FAN 4",
+      "hc-fmri": "hc:///chassis=0/fan=4",
       "sensors": [],
       "leds": []
     },
     {
       "label": "FAN 5",
+      "hc-fmri": "hc:///chassis=0/fan=5",
       "sensors": [],
       "leds": []
     },
     {
       "label": "FAN 6",
+      "hc-fmri": "hc:///chassis=0/fan=6",
       "sensors": [
         {
           "name": "FANA",
           "type": "speed",
           "state": 192,
           "state-description": "0xc0",
-          "reading": 2600,
+          "reading": 2200,
           "units": "RPM",
           "threshold-lower-non-critical": 700,
           "threshold-lower-critical": 500,
@@ -1756,6 +1577,7 @@ Sample output:
     },
     {
       "label": "FAN 7",
+      "hc-fmri": "hc:///chassis=0/fan=7",
       "sensors": [],
       "leds": []
     }

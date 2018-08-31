@@ -73,7 +73,7 @@ llist_remove(llist_t *list, void *data)
 }
 
 void
-llist_destroy(llist_t *list, int (*cbfunc)(llist_t *, void *), void *arg)
+llist_destroy(llist_t *list, void (*cbfunc)(llist_t *, void *), void *arg)
 {
 	llist_t *node, *victim;
 
@@ -83,6 +83,6 @@ llist_destroy(llist_t *list, int (*cbfunc)(llist_t *, void *), void *arg)
 		/* destroy node */
 		victim = node;
 		node = node->ll_next;
-		(void) cbfunc(victim, arg);
+		cbfunc(victim, arg);
 	}
 }

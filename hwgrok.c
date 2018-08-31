@@ -20,26 +20,12 @@ extern int dump_hw_config_json(hwg_info_t *, char *);
 #define	topo_list_next(elem)	((void *)(((topo_list_t *)(elem))->l_next))
 
 static const char *pname;
-static const char optstr[] = "dR:";
-boolean_t enable_debug = B_FALSE;
+static const char optstr[] = "R:";
 
 static void
 usage()
 {
-	(void) fprintf(stderr, "\n%s [-d][-R root]\n\n", pname);
-}
-
-void
-hwg_debug(const char *format, ...)
-{
-	va_list ap;
-
-	if (enable_debug != B_TRUE)
-		return;
-
-	va_start(ap, format);
-	(void) vfprintf(stdout, format, ap);
-	va_end(ap);
+	(void) fprintf(stderr, "\n%s [-R root]\n\n", pname);
 }
 
 void
@@ -53,25 +39,159 @@ hwg_error(const char *format, ...)
 }
 
 static void
-*hwg_zalloc(ssize_t sz)
+hwg_free_sensor(llist_t *node, void *arg)
 {
-	void *buf;
+	hwg_sensor_t *hwsen = (hwg_sensor_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
 
-	if ((buf = calloc(sizeof (char), sz)) == NULL) {
-		return (NULL);
-	}
-	(void) memset(buf, 0, sz);
-	return (buf);
+	topo_hdl_strfree(thp, hwsen->hwsen_name);
+	topo_hdl_strfree(thp, hwsen->hwsen_type);
+	topo_hdl_strfree(thp, hwsen->hwsen_units);
+	topo_hdl_strfree(thp, hwsen->hwsen_state_descr);
+	topo_hdl_free(thp, hwsen, sizeof (hwg_sensor_t));
 }
 
 static void
-hwsen_free_sensor(hwg_sensor_t *hwsen)
+hwg_free_led(llist_t *node, void *arg)
 {
-	free(hwsen->hwsen_name);
-	free(hwsen->hwsen_type);
-	free(hwsen->hwsen_units);
-	free(hwsen->hwsen_state_descr);
-	free(hwsen);
+	hwg_led_t *hwled = (hwg_led_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	topo_hdl_strfree(thp, hwled->hwled_type);
+	topo_hdl_strfree(thp, hwled->hwled_mode);
+	topo_hdl_free(thp, hwled, sizeof (hwg_led_t));
+}
+
+static void
+hwg_free_common(topo_hdl_t *thp, hwg_common_info_t *cinfo)
+{
+	if (cinfo == NULL)
+		return;
+
+	free(cinfo->hwci_fmri);
+	topo_hdl_strfree(thp, cinfo->hwci_model);
+	topo_hdl_strfree(thp, cinfo->hwci_part);
+	topo_hdl_strfree(thp, cinfo->hwci_serial);
+	topo_hdl_strfree(thp, cinfo->hwci_version);
+	topo_hdl_strfree(thp, cinfo->hwci_manufacturer);
+	topo_hdl_strfree(thp, cinfo->hwci_label);
+	llist_destroy(&cinfo->hwci_sensors, hwg_free_sensor, thp);
+	llist_destroy(&cinfo->hwci_sensors, hwg_free_led, thp);
+}
+
+static void
+hwg_free_processor(llist_t *node, void *arg)
+{
+	hwg_processor_t *hwproc = (hwg_processor_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	hwg_free_common(thp, &hwproc->hwpr_common_info);
+	topo_hdl_strfree(thp, hwproc->hwpr_brand);
+	topo_hdl_free(thp, hwproc, sizeof (hwg_processor_t));
+}
+
+static void
+hwg_free_dimm(topo_hdl_t *thp, hwg_dimm_t *dimm)
+{
+	hwg_free_common(thp, &dimm->hwdi_common_info);
+	topo_hdl_strfree(thp, dimm->hwdi_type);
+	topo_hdl_free(thp, dimm, sizeof (hwg_dimm_t));
+}
+
+static void
+hwg_free_dimm_slot(llist_t *node, void *arg)
+{
+	hwg_dimm_slot_t *dimmslot = (hwg_dimm_slot_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	hwg_free_common(thp, &dimmslot->hwds_common_info);
+	topo_hdl_strfree(thp, dimmslot->hwds_formfactor);
+	if (dimmslot->hwds_dimm != NULL)
+		hwg_free_dimm(thp, dimmslot->hwds_dimm);
+	topo_hdl_free(thp, dimmslot, sizeof (hwg_dimm_slot_t));
+}
+
+static void
+hwg_free_disk(topo_hdl_t *thp, hwg_disk_t *disk)
+{
+	hwg_free_common(thp, &disk->hwdk_common_info);
+	topo_hdl_free(thp, disk, sizeof (hwg_disk_t));
+}
+
+static void
+hwg_free_disk_bay(llist_t *node, void *arg)
+{
+	hwg_disk_bay_t *bay = (hwg_disk_bay_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	hwg_free_common(thp, &bay->hwdkb_common_info);
+	if (bay->hwdkb_disk != NULL)
+		hwg_free_disk(thp, bay->hwdkb_disk);
+	topo_hdl_free(thp, bay, sizeof (hwg_disk_bay_t));
+}
+
+static void
+hwg_free_pcidev(llist_t *node, void *arg)
+{
+	hwg_pcidev_t *dev = (hwg_pcidev_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	hwg_free_common(thp, &dev->hwpci_common_info);
+	topo_hdl_strfree(thp, dev->hwpci_vendor);
+	topo_hdl_strfree(thp, dev->hwpci_devnm);
+	topo_hdl_strfree(thp, dev->hwpci_subsysnm);
+	topo_hdl_strfree(thp, dev->hwpci_devpath);
+	topo_hdl_strfree(thp, dev->hwpci_drivernm);
+	topo_hdl_free(thp, dev, sizeof (hwg_pcidev_t));
+}
+
+static void
+hwg_free_psu(llist_t *node, void *arg)
+{
+	hwg_psu_t *psu = (hwg_psu_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	hwg_free_common(thp, &psu->hwps_common_info);
+	topo_hdl_free(thp, psu, sizeof (hwg_psu_t));
+}
+
+static void
+hwg_free_fan(llist_t *node, void *arg)
+{
+	hwg_fan_t *fan = (hwg_fan_t *)node;
+	topo_hdl_t *thp = (topo_hdl_t *)arg;
+
+	hwg_free_common(thp, &fan->hwfa_common_info);
+	topo_hdl_free(thp, fan, sizeof (hwg_fan_t));
+}
+
+static void
+hwg_free_sp(topo_hdl_t *thp, hwg_sp_t *sp)
+{
+	hwg_free_common(thp, &sp->hwsp_common_info);
+	topo_hdl_strfree(thp, sp->hwsp_macaddr);
+	topo_hdl_strfree(thp, sp->hwsp_ipv4_addr);
+	topo_hdl_strfree(thp, sp->hwsp_ipv4_subnet);
+	topo_hdl_strfree(thp, sp->hwsp_ipv4_gateway);
+	topo_hdl_strfree(thp, sp->hwsp_ipv4_config_type);
+	topo_hdl_strfree(thp, sp->hwsp_vlan_id);
+	topo_hdl_strfree(thp, sp->hwsp_ipv6_addr);
+	topo_hdl_strfree(thp, sp->hwsp_ipv6_config_type);
+	topo_hdl_free(thp, sp, sizeof (hwg_sp_t));
+}
+
+static void
+hwg_free_motherboard(topo_hdl_t *thp, hwg_motherboard_t *mb)
+{
+	hwg_free_common(thp, &mb->hwmbo_common_info);
+	topo_hdl_free(thp, mb, sizeof (hwg_motherboard_t));
+}
+
+static void
+hwg_free_chassis(topo_hdl_t *thp, hwg_chassis_t *chassis)
+{
+	hwg_free_common(thp, &chassis->hwch_common_info);
+	topo_hdl_free(thp, chassis, sizeof (hwg_chassis_t));
 }
 
 static int
@@ -132,7 +252,7 @@ hwg_get_prop(tnode_t *node, topo_type_t ptype, const char *pgrp,
 		pval->hnp_is_set = B_TRUE;
 		break;
 	default:
-		hwg_debug("%s: invalid type: %u", __func__, ptype);
+		hwg_error("%s: invalid type: %u", __func__, ptype);
 		return (-1);
 	}
 	return (0);
@@ -172,13 +292,14 @@ hwg_fmri_strip(const char *fmri)
 }
 
 static void
-get_sensor_type(uint32_t reading_type, uint32_t units, char **typestr)
+get_sensor_type(topo_hdl_t *thp, uint32_t reading_type, uint32_t units,
+    char **typestr)
 {
 	char buf[64];
 
 	if (reading_type != TOPO_SENSOR_TYPE_THRESHOLD_STATE) {
 		topo_sensor_type_name(reading_type, buf, sizeof (buf));
-		*typestr = strdup(buf);
+		*typestr = topo_hdl_strdup(thp, buf);
 		return;
 	}
 
@@ -190,23 +311,23 @@ get_sensor_type(uint32_t reading_type, uint32_t units, char **typestr)
 	case TOPO_SENSOR_UNITS_DEGREES_C:
 	case TOPO_SENSOR_UNITS_DEGREES_F:
 	case TOPO_SENSOR_UNITS_DEGREES_K:
-		*typestr = strdup("temperature");
+		*typestr = topo_hdl_strdup(thp, "temperature");
 		break;
 	case TOPO_SENSOR_UNITS_HZ:
 	case TOPO_SENSOR_UNITS_RPM:
-		*typestr = strdup("speed");
+		*typestr = topo_hdl_strdup(thp, "speed");
 		break;
 	case TOPO_SENSOR_UNITS_VOLTS:
-		*typestr = strdup("voltage");
+		*typestr = topo_hdl_strdup(thp, "voltage");
 		break;
 	case TOPO_SENSOR_UNITS_AMPS:
-		*typestr = strdup("current");
+		*typestr = topo_hdl_strdup(thp, "current");
 		break;
 	case TOPO_SENSOR_UNITS_WATTS:
-		*typestr = strdup("power consumption");
+		*typestr = topo_hdl_strdup(thp, "power consumption");
 		break;
 	default:
-		*typestr = strdup("unknown");
+		*typestr = topo_hdl_strdup(thp, "unknown");
 	}
 }
 
@@ -236,17 +357,17 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 	}
 
 	if (nvlist_lookup_string(fmri, FM_FMRI_HC_SERIAL_ID, &val) == 0 &&
-	    (cinfo->hwci_serial = strdup(val)) == NULL)
+	    (cinfo->hwci_serial = topo_hdl_strdup(thp, val)) == NULL)
 		goto out;
 	if (nvlist_lookup_string(fmri, FM_FMRI_HC_PART, &val) == 0 &&
-	    (cinfo->hwci_part = strdup(val)) == NULL)
+	    (cinfo->hwci_part = topo_hdl_strdup(thp, val)) == NULL)
 		goto out;
 	if (nvlist_lookup_string(fmri, FM_FMRI_HC_REVISION, &val) == 0 &&
-	    (cinfo->hwci_version = strdup(val)) == NULL)
+	    (cinfo->hwci_version = topo_hdl_strdup(thp, val)) == NULL)
 		goto out;
 
 	if (topo_prop_get_string(node, "protocol", "label",
-	    &(cinfo->hwci_label), &err) != 0 && err != ETOPO_PROP_NOENT) {
+	    &cinfo->hwci_label, &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto out;
 	}
 
@@ -264,8 +385,8 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		uint32_t reading_type, state, units;
 		char *sensor_class = NULL;
 
-		hwg_debug("Found sensor (%s)\n", topo_node_name(fp->tf_node));
-		if ((sensor = hwg_zalloc(sizeof (hwg_sensor_t))) == NULL)
+		if ((sensor = topo_hdl_zalloc(thp, sizeof (hwg_sensor_t))) ==
+		    NULL)
 			goto out;
 
 		/*
@@ -277,13 +398,11 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		    "type", &reading_type, &err) != 0 ||
 		    topo_prop_get_string(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_SENSOR_CLASS, &sensor_class, &err) != 0) {
-			free(sensor);
 			goto out;
 		}
 		if (topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_SENSOR_STATE, &sensor->hwsen_state, &err) != 0) {
 			if (err != ETOPO_PROP_NOENT) {
-				free(sensor);
 				goto out;
 			}
 		} else {
@@ -295,7 +414,8 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 			    sensor->hwsen_state, buf, 64);
 			sensor->hwsen_state_descr = strdup(buf);
 		}
-		sensor->hwsen_name = strdup(topo_node_name(fp->tf_node));
+		sensor->hwsen_name = topo_hdl_strdup(thp,
+		    topo_node_name(fp->tf_node));
 
 		llist_append(&(cinfo->hwci_sensors), sensor);
 
@@ -304,7 +424,7 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		 * move on to the next sensor.
 		 */
 		if (strcmp(sensor_class, TOPO_SENSOR_CLASS_THRESHOLD) != 0) {
-			get_sensor_type(reading_type, 0,
+			get_sensor_type(thp, reading_type, 0,
 			    &(sensor->hwsen_type));
 			continue;
 		}
@@ -314,12 +434,11 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		    TOPO_SENSOR_READING, &(sensor->hwsen_reading), &err) != 0 ||
 		    topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_SENSOR_UNITS, &units, &err) != 0) {
-			free(sensor);
 			goto out;
 		}
-		get_sensor_type(reading_type, units, &(sensor->hwsen_type));
+		get_sensor_type(thp, reading_type, units, &sensor->hwsen_type);
 		topo_sensor_units_name(units, buf, 64);
-		sensor->hwsen_units = strdup(buf);
+		sensor->hwsen_units = topo_hdl_strdup(thp, buf);
 
 		/*
 		 * Gather the upper and lower sensor reading thresholds, if
@@ -328,37 +447,31 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
 		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_LNC,
 		    &(sensor->hwsen_thresh_lnc)) != 0) {
-			free(sensor);
 			goto out;
 		}
 		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
 		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_LCR,
 		    &(sensor->hwsen_thresh_lcr)) != 0) {
-			free(sensor);
 			goto out;
 		}
 		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
 		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_LNR,
 		    &(sensor->hwsen_thresh_lnr)) != 0) {
-			free(sensor);
 			goto out;
 		}
 		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
 		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_UNC,
 		    &(sensor->hwsen_thresh_unc)) != 0) {
-			free(sensor);
 			goto out;
 		}
 		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
 		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_UCR,
 		    &(sensor->hwsen_thresh_ucr)) != 0) {
-			free(sensor);
 			goto out;
 		}
 		if (hwg_get_prop(fp->tf_node, TOPO_TYPE_DOUBLE,
 		    TOPO_PGROUP_FACILITY, TOPO_PROP_THRESHOLD_UNR,
 		    &(sensor->hwsen_thresh_unr)) != 0) {
-			free(sensor);
 			goto out;
 		}
 	}
@@ -372,23 +485,21 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		hwg_led_t *led;
 		uint32_t ledmode, ledtype;
 
-		hwg_debug("Found LED\n");
-		if ((led = hwg_zalloc(sizeof (hwg_led_t))) == NULL)
+		if ((led = topo_hdl_zalloc(thp, sizeof (hwg_led_t))) == NULL)
 			goto out;
 		if (topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_LED_MODE, &ledmode, &err) != 0 ||
 		    topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    "type", &ledtype, &err) != 0) {
-			free(led);
 			goto out;
 		}
 
 		topo_led_type_name(ledtype, buf, 64);
-		led->hwled_type = strdup(buf);
+		led->hwled_type = topo_hdl_strdup(thp, buf);
 		if (ledmode == TOPO_LED_STATE_ON)
-			led->hwled_mode = strdup("on");
+			led->hwled_mode = topo_hdl_strdup(thp, "on");
 		else
-			led->hwled_mode = strdup("off");
+			led->hwled_mode = topo_hdl_strdup(thp, "off");
 
 		llist_append(&(cinfo->hwci_leds), led);
 	}
@@ -404,7 +515,7 @@ out:
 		topo_list_delete(&ledlist.tf_list, fp);
 		topo_hdl_free(thp, fp, sizeof (topo_faclist_t));
 	}
-
+	
 	return (ret);
 }
 
@@ -415,14 +526,13 @@ grok_bay(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_disk_bay_t *bay;
 
-	hwg_debug("Found disk bay\n");
-	if ((bay = hwg_zalloc(sizeof (hwg_disk_bay_t))) == NULL) {
+	if ((bay = topo_hdl_zalloc(thp, sizeof (hwg_disk_bay_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(bay->hwdkb_common_info)) != 0) {
 		hwg_error("failure gathering common props\n");
-		free(bay);
+		hwg_free_disk_bay((struct llist *)bay, thp);
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_disk_bays), bay);
@@ -441,38 +551,32 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	char *capstr;
 	uint32_t rpm;
 
-	hwg_debug("Found disk\n");
-	if ((disk = hwg_zalloc(sizeof (hwg_disk_t))) == NULL) {
+	if ((disk = topo_hdl_zalloc(thp, sizeof (hwg_disk_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	cinfo = &(disk->hwdk_common_info);
 	if (get_common_props(thp, node, cinfo) != 0) {
 		hwg_error("failure gathering common props\n");
-		free(disk);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE, "model",
 	    &(cinfo->hwci_model), &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(disk);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE, "manufacturer",
 	    &(cinfo->hwci_manufacturer), &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(disk);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE,
 	    "capacity-in-bytes", &capstr, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(disk);
-		return (-1);
+		goto err;
 	}
 	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_STORAGE,
 	    "speed-in-rpm", &disk->hwdk_speed) != 0) {
-		free(disk);
-		return (-1);
+		goto err;
 	}
 	disk->hwdk_size = (uint64_t)strtoll(capstr, NULL, 10);
 	topo_hdl_strfree(thp, capstr);
@@ -481,6 +585,9 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	cbarg->cb_currbay->hwdkb_disk = disk;
 	cbarg->cb_currbay->hwdkb_present = B_TRUE;
 	return (0);
+err:
+	hwg_free_disk(thp, disk);
+	return (-1);
 }
 
 static int
@@ -507,19 +614,18 @@ grok_chip(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_processor_t *processor;
-	char *vendor = NULL;
+	char *vendor = NULL, *brand = NULL;
 	int err;
 
-	hwg_debug("Found processor\n");
-	if ((processor = hwg_zalloc(sizeof (hwg_processor_t))) == NULL) {
+	if ((processor = topo_hdl_zalloc(thp, sizeof (hwg_processor_t))) ==
+	    NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &processor->hwpr_common_info) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
-		free(processor);
-		return (-1);
+		goto err;
 	}
 	llist_append(&(hwinfo->hwi_processors), processor);
 	cbarg->cb_currchip = processor;
@@ -532,25 +638,35 @@ grok_chip(topo_hdl_t *thp, tnode_t *node, void *arg)
 	    &processor->hwpr_stepping, &err) != 0) {
 		hwg_error("required chip node properties missing on node: "
 		    "%s=%d", cbarg->cb_nodename, cbarg->cb_nodeinst);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "chip-properties", "vendor_id", &vendor,
 	    &err) != 0 && err != ETOPO_PROP_NOENT) {
-		return (-1);
+		hwg_error("failed to lookup prop chip-properties/vendor_id\n");
+		goto err;
 	}
-	if (vendor == NULL)
-		return (0);
-	else if (strcmp(vendor, "GenuineIntel") == 0)
+	if (vendor != NULL && strcmp(vendor, "GenuineIntel") == 0)
 		processor->hwpr_common_info.hwci_manufacturer =
-		    strdup("Intel");
-	else if (strcmp(vendor, "AuthenticAMD") == 0)
-		processor->hwpr_common_info.hwci_manufacturer = strdup("AMD");
-	else
-		processor->hwpr_common_info.hwci_manufacturer = strdup(vendor);
+		    topo_hdl_strdup(thp, "Intel");
+	else if (vendor != NULL && strcmp(vendor, "AuthenticAMD") == 0)
+		processor->hwpr_common_info.hwci_manufacturer =
+		    topo_hdl_strdup(thp, "AMD");
+	else if (vendor != NULL)
+		processor->hwpr_common_info.hwci_manufacturer =
+		    topo_hdl_strdup(thp, vendor);
 
 	topo_hdl_strfree(thp, vendor);
 
+	if (topo_prop_get_string(node, "chip-properties", "brand",
+	    &processor->hwpr_brand, &err) != 0 && err != ETOPO_PROP_NOENT) {
+		hwg_error("failed to lookup prop chip-properties/brand\n");
+		goto err;
+	}
+
 	return (0);
+err:
+	hwg_free_processor((struct llist *)processor, thp);
+	return (-1);
 }
 
 static int
@@ -560,15 +676,14 @@ grok_psu(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_psu_t *psu;
 
-	hwg_debug("Found power-supply\n");
-	if ((psu = hwg_zalloc(sizeof (hwg_psu_t))) == NULL) {
+	if ((psu = topo_hdl_zalloc(thp, sizeof (hwg_psu_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(psu->hwps_common_info)) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
-		free(psu);
+		hwg_free_psu((struct llist *)psu, thp);
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_psus), psu);
@@ -584,39 +699,37 @@ grok_dimm(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_common_info_t *cinfo;
 	int err;
 
-	hwg_debug("Found dimm\n");
-	if ((dimm = hwg_zalloc(sizeof (hwg_dimm_t))) == NULL) {
+	if ((dimm = topo_hdl_zalloc(thp, sizeof (hwg_dimm_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	cinfo = &(dimm->hwdi_common_info);
 	if (get_common_props(thp, node, cinfo) != 0) {
 		hwg_error("failure gathering common props\n");
-		free(dimm);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_uint64(node, "dimm-properties", "size",
 	    &(dimm->hwdi_size), &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(dimm);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "dimm-properties", "manufacturer",
 	    &(cinfo->hwci_manufacturer), &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(dimm);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "dimm-properties", "type",
 	    &(dimm->hwdi_type), &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(dimm);
-		return (-1);
+		goto err;
 	}
 
 	llist_append(&(hwinfo->hwi_dimms), dimm);
 	cbarg->cb_currslot->hwds_dimm = dimm;
 	cbarg->cb_currslot->hwds_present = B_TRUE;
 	return (0);
+err:
+	hwg_free_dimm(thp, dimm);
+	return (-1);
 }
 
 static int
@@ -626,15 +739,14 @@ grok_fan(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_fan_t *fan;
 
-	hwg_debug("Found fan\n");
-	if ((fan = hwg_zalloc(sizeof (hwg_fan_t))) == NULL) {
+	if ((fan = topo_hdl_zalloc(thp, sizeof (hwg_fan_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
-	if (get_common_props(thp, node, &(fan->hwfa_common_info)) != 0) {
+	if (get_common_props(thp, node, &fan->hwfa_common_info) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
-		free(fan);
+		hwg_free_fan((struct llist *)fan, thp);
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_fans), fan);
@@ -650,8 +762,6 @@ grok_slot(topo_hdl_t *thp, tnode_t *node, void *arg)
 	uint32_t slottype;
 	int err;
 
-	hwg_debug("Found slot\n");
-
 	/*
 	 * If it's not a DIMM slot, skip it.
 	 */
@@ -663,13 +773,13 @@ grok_slot(topo_hdl_t *thp, tnode_t *node, void *arg)
 	if (slottype != TOPO_SLOT_TYPE_DIMM)
 		return (0);
 
-	if ((slot = hwg_zalloc(sizeof (hwg_dimm_slot_t))) == NULL) {
+	if ((slot = topo_hdl_zalloc(thp, sizeof (hwg_dimm_slot_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(slot->hwds_common_info)) != 0) {
 		hwg_error("failure gathering common props\n");
-		free(slot);
+		hwg_free_dimm_slot((struct llist *)slot, thp);
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_dimm_slots), slot);
@@ -684,14 +794,13 @@ grok_pcidev(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_pcidev_t *pcidev;
 
-	hwg_debug("Found PCI(EX) device\n");
-	if ((pcidev = hwg_zalloc(sizeof (hwg_pcidev_t))) == NULL) {
+	if ((pcidev = topo_hdl_zalloc(thp, sizeof (hwg_pcidev_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(pcidev->hwpci_common_info)) != 0) {
 		hwg_error("failure gathering common props\n");
-		free(pcidev);
+		hwg_free_pcidev((struct llist *)pcidev, thp);
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_pcidevs), pcidev);
@@ -707,7 +816,6 @@ grok_pcifn(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_pcidev_t *pcidev;
 	int err;
 
-	hwg_debug("Found PCI(EX) function\n");
 	pcidev = cbarg->cb_currdev;
 	if (topo_prop_get_string(node, TOPO_PGROUP_PCI, TOPO_PCI_VENDNM,
 	    &pcidev->hwpci_vendor, &err) != 0 &&
@@ -750,55 +858,48 @@ grok_sp(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_sp_t *sp;
 	int err;
 
-	hwg_debug("Found service-processor\n");
-	if ((sp = hwg_zalloc(sizeof (hwg_sp_t))) == NULL) {
+	if ((sp = topo_hdl_zalloc(thp, sizeof (hwg_sp_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(sp->hwsp_common_info)) != 0) {
 		hwg_error("failure gathering common props\n");
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv4-address",
 	    &sp->hwsp_ipv4_addr, &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv4-subnet",
 	    &sp->hwsp_ipv4_subnet, &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv4-gateway",
 	    &sp->hwsp_ipv4_gateway, &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv4-config-type",
 	    &sp->hwsp_ipv4_config_type, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "vlan-id",
 	    &sp->hwsp_vlan_id, &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv6-address",
 	    &sp->hwsp_ipv6_addr, &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv6-config-type",
 	    &sp->hwsp_ipv6_config_type, &err) != 0 && err != ETOPO_PROP_NOENT) {
-		free(sp);
-		return (-1);
+		goto err;
 	}
 	hwinfo->hwi_sp = sp;
-
 	return (0);
+err:
+	hwg_free_sp(thp, sp);
+	return (-1);
 }
 
 static int
@@ -810,8 +911,7 @@ grok_motherboard(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_motherboard_t *mb;
 	int err;
 
-	hwg_debug("Found motherboard\n");
-	if ((mb = hwg_zalloc(sizeof (hwg_motherboard_t))) == NULL) {
+	if ((mb = topo_hdl_zalloc(thp, sizeof (hwg_motherboard_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
@@ -819,24 +919,23 @@ grok_motherboard(topo_hdl_t *thp, tnode_t *node, void *arg)
 	if (get_common_props(thp, node, cinfo) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
-		free(mb);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "motherboard-properties", "manufacturer",
 	    &(cinfo->hwci_manufacturer), &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(mb);
-		return (-1);
+		goto err;
 	}
 	if (topo_prop_get_string(node, "motherboard-properties", "product",
 	    &(cinfo->hwci_model), &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
-		free(mb);
-		return (-1);
+		goto err;
 	}
 	hwinfo->hwi_motherboard = mb;
-
 	return (0);
+err:
+	hwg_free_motherboard(thp, mb);
+	return (-1);
 }
 
 static int
@@ -846,15 +945,14 @@ grok_chassis(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_chassis_t *chassis;
 
-	hwg_debug("Found chassis\n");
-	if ((chassis = hwg_zalloc(sizeof (hwg_chassis_t))) == NULL) {
+	if ((chassis = topo_hdl_zalloc(thp, sizeof (hwg_chassis_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
 	}
 	if (get_common_props(thp, node, &(chassis->hwch_common_info)) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
-		free(chassis);
+		hwg_free_chassis(thp, chassis);
 		return (-1);
 	}
 	hwinfo->hwi_chassis = chassis;
@@ -862,49 +960,51 @@ grok_chassis(topo_hdl_t *thp, tnode_t *node, void *arg)
 	return (0);
 }
 
-
 static int
 topocb(topo_hdl_t *thp, tnode_t *node, void *arg)
 {
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
+	int ret;
 
 	cbarg->cb_nodename = topo_node_name(node);
 	cbarg->cb_nodeinst = topo_node_instance(node);
 
 	if (strcmp(cbarg->cb_nodename, CHASSIS) == 0) {
-		grok_chassis(thp, node, arg);
+		ret = grok_chassis(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, BAY) == 0) {
-		grok_bay(thp, node, arg);
+		ret = grok_bay(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, CHIP) == 0) {
-		grok_chip(thp, node, arg);
+		ret = grok_chip(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, CORE) == 0) {
-		grok_core(thp, node, arg);
+		ret = grok_core(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, DIMM) == 0) {
-		grok_dimm(thp, node, arg);
+		ret = grok_dimm(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, DISK) == 0) {
-		grok_disk(thp, node, arg);
+		ret = grok_disk(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, FAN) == 0) {
-		grok_fan(thp, node, arg);
+		ret = grok_fan(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, MOTHERBOARD) == 0) {
-		grok_motherboard(thp, node, arg);
+		ret = grok_motherboard(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PCI_DEVICE) == 0) {
-		grok_pcidev(thp, node, arg);
+		ret = grok_pcidev(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PCIEX_DEVICE) == 0) {
-		grok_pcidev(thp, node, arg);
+		ret = grok_pcidev(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PCI_FUNCTION) == 0) {
-		grok_pcifn(thp, node, arg);
+		ret = grok_pcifn(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PCIEX_FUNCTION) == 0) {
-		grok_pcifn(thp, node, arg);
+		ret = grok_pcifn(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PSU) == 0) {
-		grok_psu(thp, node, arg);
+		ret = grok_psu(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, SLOT) == 0) {
-		grok_slot(thp, node, arg);
+		ret = grok_slot(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, SP) == 0) {
-		grok_sp(thp, node, arg);
+		ret = grok_sp(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, STRAND) == 0) {
-		grok_strand(thp, node, arg);
+		ret = grok_strand(thp, node, arg);
+	} else {
+		return (TOPO_WALK_NEXT);
 	}
-	return (TOPO_WALK_NEXT);
+	return (ret == 0 ? TOPO_WALK_NEXT : TOPO_WALK_ERR);
 }
 
 int
@@ -922,9 +1022,6 @@ main(int argc, char *argv[])
 	while (optind < argc) {
 		while ((c = getopt(argc, argv, optstr)) != -1) {
 			switch (c) {
-			case 'd':
-				enable_debug = B_TRUE;
-				break;
 			case 'R':
 				root = optarg;
 				break;

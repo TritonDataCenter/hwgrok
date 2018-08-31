@@ -24,6 +24,6 @@ typedef struct llist {
 void llist_prepend(llist_t *, void *);
 void llist_append(llist_t *, void *);
 int llist_walker(llist_t *, int (*)(llist_t *, void *), void *);
-void llist_destroy(llist_t *, int (*)(llist_t *, void *), void *);
+void llist_destroy(llist_t *, void (*)(llist_t *, void *), void *);
 
 #endif

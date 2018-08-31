@@ -55,7 +55,6 @@ typedef struct hwg_common_info {
 	char *hwci_part;
 	char *hwci_serial;
 	char *hwci_label;
-	char *hwci_fmristr;
 	char *hwci_version;
 	llist_t hwci_sensors;
 	llist_t hwci_leds;
@@ -98,6 +97,7 @@ typedef struct hwg_processor {
 	uint_t hwpr_family;
 	uint_t hwpr_model;
 	uint_t hwpr_stepping;
+	char *hwpr_brand;
 } hwg_processor_t;
 
 typedef struct hwg_dimm {

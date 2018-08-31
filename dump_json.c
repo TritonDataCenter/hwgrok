@@ -40,6 +40,7 @@
 #define	PCI_SUBSYS_NAME		"pci-subsystem-name"
 #define	PCI_VENDOR_NAME		"pci-vendor-name"
 #define	PROCESSORS		"processors"
+#define	PROC_BRAND		"processor-brand"
 #define	PROC_FAMILY		"processor-family"
 #define	PROC_MODEL		"processor-model"
 #define	PROC_STEPPING		"processor-stepping"
@@ -287,7 +288,8 @@ dump_psu_json(llist_t *node, void *arg)
 static int
 dump_processor_json(llist_t *node, void *arg)
 {
-	char *model = UNKNOWN, *manuf = UNKNOWN;
+	char *model = UNKNOWN, *manuf = UNKNOWN, *brand = UNKNOWN;
+	char *label = UNKNOWN;
 	hwg_processor_t *chip = (hwg_processor_t *)node;
 	hwg_common_info_t *cinfo = &chip->hwpr_common_info;
 	boolean_t firstelem = *(boolean_t *)arg;
@@ -296,17 +298,23 @@ dump_processor_json(llist_t *node, void *arg)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{\"%s\":\"%s\",", LABEL, cinfo->hwci_label);
+	if (cinfo->hwci_label != NULL)
+		label = cinfo->hwci_label;
+
+	(void) printf("{\"%s\":\"%s\",", LABEL, label);
 
 	if (cinfo->hwci_model != NULL)
 		model = cinfo->hwci_model;
 	if (cinfo->hwci_manufacturer != NULL)
 		manuf = cinfo->hwci_manufacturer;
+	if (chip->hwpr_brand != NULL)
+		brand = chip->hwpr_brand;
 
 	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
 	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
 	(void) printf("\"%s\":\"%s\",", MODEL, model);
 
+	(void) printf("\"%s\":\"%s\",", PROC_BRAND, brand);
 	(void) printf("\"%s\":\"%u\",", PROC_FAMILY, chip->hwpr_family);
 	(void) printf("\"%s\":\"%u\",", PROC_MODEL, chip->hwpr_model);
 	(void) printf("\"%s\":\"%u\",", PROC_STEPPING, chip->hwpr_stepping);

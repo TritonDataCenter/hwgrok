@@ -386,8 +386,10 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		char *sensor_class = NULL;
 
 		if ((sensor = topo_hdl_zalloc(thp, sizeof (hwg_sensor_t))) ==
-		    NULL)
+		    NULL) {
+			hwg_error("alloc failed!\n");
 			goto out;
+		}
 
 		/*
 		 * Lookup the sensor reading type and sensor class. This tell
@@ -398,12 +400,20 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		    "type", &reading_type, &err) != 0 ||
 		    topo_prop_get_string(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_SENSOR_CLASS, &sensor_class, &err) != 0) {
-			goto out;
+			hwg_error("failed to get %s or %s prop on sensor "
+			    "node: %s\n", "type", TOPO_SENSOR_CLASS,
+			    topo_node_name(fp->tf_node));
+			hwg_free_sensor((struct llist *)sensor, thp);
+			continue;
 		}
 		if (topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_SENSOR_STATE, &sensor->hwsen_state, &err) != 0) {
 			if (err != ETOPO_PROP_NOENT) {
-				goto out;
+				hwg_error("failed to get %s prop on sensor "
+				    "node: %s\n", TOPO_SENSOR_STATE,
+				    topo_node_name(fp->tf_node));
+				hwg_free_sensor((struct llist *)sensor, thp);
+				continue;
 			}
 		} else {
 			sensor->hwsen_hasstate = B_TRUE;
@@ -434,7 +444,10 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		    TOPO_SENSOR_READING, &(sensor->hwsen_reading), &err) != 0 ||
 		    topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_SENSOR_UNITS, &units, &err) != 0) {
-			goto out;
+			hwg_error("failed to get %s or %s prop on sensor node: "
+			    "%s\n", TOPO_SENSOR_READING, TOPO_SENSOR_UNITS,
+			    topo_node_name(fp->tf_node));
+			continue;
 		}
 		get_sensor_type(thp, reading_type, units, &sensor->hwsen_type);
 		topo_sensor_units_name(units, buf, 64);
@@ -485,12 +498,15 @@ get_common_props(topo_hdl_t *thp, tnode_t *node, hwg_common_info_t *cinfo)
 		hwg_led_t *led;
 		uint32_t ledmode, ledtype;
 
-		if ((led = topo_hdl_zalloc(thp, sizeof (hwg_led_t))) == NULL)
+		if ((led = topo_hdl_zalloc(thp, sizeof (hwg_led_t))) == NULL) {
+			hwg_error("alloc failed!\n");
 			goto out;
+		}
 		if (topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    TOPO_LED_MODE, &ledmode, &err) != 0 ||
 		    topo_prop_get_uint32(fp->tf_node, TOPO_PGROUP_FACILITY,
 		    "type", &ledtype, &err) != 0) {
+			hwg_free_led((struct llist *)led, thp);
 			goto out;
 		}
 
@@ -515,7 +531,7 @@ out:
 		topo_list_delete(&ledlist.tf_list, fp);
 		topo_hdl_free(thp, fp, sizeof (topo_faclist_t));
 	}
-	
+
 	return (ret);
 }
 

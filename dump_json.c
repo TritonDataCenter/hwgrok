@@ -26,6 +26,7 @@
 #define	IPV4_CFG_TYPE		"ipv4-config-type"
 #define	LABEL			"label"
 #define	LEDS			"leds"
+#define	LOGICAL_DISK		"logical-disk"
 #define	MANUF			"manufacturer"
 #define	MEMORY			"memory"
 #define	MODE			"mode"
@@ -138,7 +139,7 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 	if (cinfo->hwci_sensors.ll_next != NULL &&
 	    llist_walker(&(cinfo->hwci_sensors), dump_sensor_json,
 	    &firstelem) != 0) {
-		hwg_error("error walking disk sensors\n");
+		hwg_error("error walking sensors\n");
 		return;
 	}
 	(void) printf("],");
@@ -148,7 +149,7 @@ dump_facilities_json(hwg_common_info_t *cinfo)
 	if (cinfo->hwci_leds.ll_next != NULL &&
 	    llist_walker(&(cinfo->hwci_leds), dump_led_json,
 	    &firstelem) != 0) {
-		hwg_error("error walking disk leds\n");
+		hwg_error("error walking leds\n");
 		return;
 	}
 	(void) printf("]");
@@ -392,6 +393,12 @@ dump_disk_json(hwg_disk_t *disk)
 	if (disk->hwdk_speed.hnp_is_set)
 		(void) printf("\"%s\":%u,", SPEED_RPM,
 		    disk->hwdk_speed.hnp_u32);
+	if (disk->hwdk_devpath != NULL)
+		(void) printf("\"%s\":\"%s\",", DEVICE_PATH,
+		    disk->hwdk_devpath);
+	if (disk->hwdk_ctd != NULL)
+		(void) printf("\"%s\":\"%s\",", LOGICAL_DISK,
+		    disk->hwdk_ctd);
 
 	dump_facilities_json(cinfo);
 

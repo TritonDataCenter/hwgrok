@@ -123,6 +123,8 @@ typedef struct hwg_disk {
 	hwg_common_info_t hwdk_common_info;
 	uint64_t hwdk_size;
 	hwg_numeric_prop_t hwdk_speed;
+	char *hwdk_devpath;
+	char *hwdk_ctd;
 } hwg_disk_t;
 
 typedef struct hwg_disk_bay {

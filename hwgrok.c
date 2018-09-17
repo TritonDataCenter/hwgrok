@@ -115,6 +115,8 @@ static void
 hwg_free_disk(topo_hdl_t *thp, hwg_disk_t *disk)
 {
 	hwg_free_common(thp, &disk->hwdk_common_info);
+	topo_hdl_strfree(thp, disk->hwdk_devpath);
+	topo_hdl_strfree(thp, disk->hwdk_ctd);
 	topo_hdl_free(thp, disk, sizeof (hwg_disk_t));
 }
 
@@ -588,6 +590,14 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE,
 	    "capacity-in-bytes", &capstr, &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DEV_PATH,
+	    &disk->hwdk_devpath, &err) != 0 && err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE, "logical-disk",
+	    &disk->hwdk_ctd, &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto err;
 	}
 	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_STORAGE,

@@ -487,8 +487,18 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 
 	(void) printf("{\n");
 
-	dump_chassis_json(hwinfo->hwi_chassis);
+	/*
+	 * Systems that weren't emnumerated from a platform-specific topo
+	 * map likely won't have a chassis node.  So we need to handle the
+	 * case that this field is NULL.
+	 */
+	if (hwinfo->hwi_chassis != NULL)
+		dump_chassis_json(hwinfo->hwi_chassis);
 
+	/*
+	 * Similarly, non-server platforms (i.e. desktops/laptops/VMs) wont
+	 * have a service processor.
+	 */
 	if (hwinfo->hwi_sp != NULL)
 		dump_sp_json(hwinfo->hwi_sp);
 

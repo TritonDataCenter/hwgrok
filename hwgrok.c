@@ -183,6 +183,18 @@ hwg_free_sp(topo_hdl_t *thp, hwg_sp_t *sp)
 }
 
 static void
+hwg_free_usbdev(topo_hdl_t *thp, hwg_usbdev_t *usbdev)
+{
+	hwg_free_common(thp, &usbdev->hwusb_common_info);
+	topo_hdl_strfree(thp, usbdev->hwusb_version);
+	topo_hdl_strfree(thp, usbdev->hwusb_speed);
+	topo_hdl_strfree(thp, usbdev->hwusb_vendor);
+	topo_hdl_strfree(thp, usbdev->hwusb_devpath);
+	topo_hdl_strfree(thp, usbdev->hwusb_drivernm);
+	topo_hdl_free(thp, usbdev, sizeof (hwg_usbdev_t));
+}
+
+static void
 hwg_free_motherboard(topo_hdl_t *thp, hwg_motherboard_t *mb)
 {
 	hwg_free_common(thp, &mb->hwmbo_common_info);
@@ -608,8 +620,14 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	topo_hdl_strfree(thp, capstr);
 
 	llist_append(&(hwinfo->hwi_disks), disk);
-	cbarg->cb_currbay->hwdkb_disk = disk;
-	cbarg->cb_currbay->hwdkb_present = B_TRUE;
+	/*
+	 * USB disks won't have an associated bay, in which case cb_currbay
+	 * will be NULL.
+	 */
+	if (cbarg->cb_currbay != NULL) {
+		cbarg->cb_currbay->hwdkb_disk = disk;
+		cbarg->cb_currbay->hwdkb_present = B_TRUE;
+	}
 	return (0);
 err:
 	hwg_free_disk(thp, disk);
@@ -877,6 +895,63 @@ grok_pcifn(topo_hdl_t *thp, tnode_t *node, void *arg)
 }
 
 static int
+grok_usbdev(topo_hdl_t *thp, tnode_t *node, void *arg)
+{
+	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
+	hwg_info_t *hwinfo = cbarg->cb_hw_info;
+	hwg_usbdev_t *usbdev;
+	hwg_common_info_t *cinfo;
+	int err;
+
+	if ((usbdev = topo_hdl_zalloc(thp, sizeof (hwg_usbdev_t))) == NULL) {
+		hwg_error("alloc failed\n");
+		return (-1);
+	}
+	cinfo = &(usbdev->hwusb_common_info);
+	if (get_common_props(thp, node, cinfo) != 0) {
+		hwg_error("failure gathering common props\n");
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_USB_PROPS,
+	    TOPO_PGROUP_USB_PROPS_VNAME, &usbdev->hwusb_vendor, &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_USB_PROPS,
+	    TOPO_PGROUP_USB_PROPS_SPEED, &usbdev->hwusb_speed, &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_USB_PROPS,
+	    TOPO_PGROUP_USB_PROPS_VERSION, &usbdev->hwusb_version, &err) !=
+	    0 && err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DEV_PATH,
+	    &usbdev->hwusb_devpath, &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DRIVER,
+	    &usbdev->hwusb_drivernm, &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (topo_prop_get_uint32(node, TOPO_PGROUP_IO, TOPO_IO_INSTANCE,
+	    &usbdev->hwusb_driverinst, &err) != 0 && err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	usbdev->hwusb_is_internal = !(cbarg->cb_is_chassis_dev);
+
+	llist_append(&(hwinfo->hwi_usbdevs), usbdev);
+	return (0);
+err:
+	hwg_free_usbdev(thp, usbdev);
+	return (-1);
+}
+
+
+static int
 grok_sp(topo_hdl_t *thp, tnode_t *node, void *arg)
 {
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
@@ -937,6 +1012,7 @@ grok_motherboard(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_motherboard_t *mb;
 	int err;
 
+	cbarg->cb_is_chassis_dev = B_FALSE;
 	if ((mb = topo_hdl_zalloc(thp, sizeof (hwg_motherboard_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
@@ -971,6 +1047,7 @@ grok_chassis(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
 	hwg_chassis_t *chassis;
 
+	cbarg->cb_is_chassis_dev = B_TRUE;
 	if ((chassis = topo_hdl_zalloc(thp, sizeof (hwg_chassis_t))) == NULL) {
 		hwg_error("alloc failed\n");
 		return (-1);
@@ -1027,6 +1104,8 @@ topocb(topo_hdl_t *thp, tnode_t *node, void *arg)
 		ret = grok_sp(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, STRAND) == 0) {
 		ret = grok_strand(thp, node, arg);
+	} else if (strcmp(cbarg->cb_nodename, USB_DEVICE) == 0) {
+		ret = grok_usbdev(thp, node, arg);
 	} else {
 		return (TOPO_WALK_NEXT);
 	}

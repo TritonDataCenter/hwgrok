@@ -24,6 +24,7 @@
 #define	IPV4_SUBNET		"ipv4-subnet"
 #define	IPV4_GATEWAY		"ipv4-gateway"
 #define	IPV4_CFG_TYPE		"ipv4-config-type"
+#define	IS_INTERNAL		"is-internal"
 #define	LABEL			"label"
 #define	LEDS			"leds"
 #define	LOGICAL_DISK		"logical-disk"
@@ -62,12 +63,20 @@
 #define	THRESH_UNR		"threshold-upper-non-recoverable"
 #define	TYPE			"type"
 #define	UNITS			"units"
+#define	USB_DEVICES		"usb-devices"
+#define	USB_PRODUCT_NAME	"usb-product-name"
+#define	USB_SPEED		"usb-speed"
+#define	USB_VENDOR_NAME		"usb-vendor-name"
+#define	USB_VERSION		"usb-version"
 
 /*
  * Used as default property value for the case where the property is present
  * but the value is not known for some reason.
  */
 #define	UNKNOWN			"unknown"
+
+#define	IS_TRUE			"true"
+#define	IS_FALSE		"false"
 
 static int
 dump_sensor_json(llist_t *node, void *arg)
@@ -480,6 +489,47 @@ dump_dimm_slot_json(llist_t *node, void *arg)
 	return (LL_WALK_NEXT);
 }
 
+static int
+dump_usbdev_json(llist_t *node, void *arg)
+{
+	char *vendor = UNKNOWN, *product = UNKNOWN, *usbver = UNKNOWN;
+	char *speed = UNKNOWN, *serial = UNKNOWN;
+	hwg_usbdev_t *usbdev = (hwg_usbdev_t *)node;
+	hwg_common_info_t *cinfo = &usbdev->hwusb_common_info;
+	boolean_t firstelem = *(boolean_t *)arg;
+
+	if (firstelem == B_FALSE)
+		(void) printf(",");
+	*(boolean_t *)arg = B_FALSE;
+
+	if (cinfo->hwci_serial != NULL)
+		serial = cinfo->hwci_serial;
+	if (cinfo->hwci_part != NULL)
+		product = cinfo->hwci_part;
+	if (usbdev->hwusb_vendor != NULL)
+		vendor = usbdev->hwusb_vendor;
+	if (usbdev->hwusb_version != NULL)
+		usbver = usbdev->hwusb_version;
+	if (usbdev->hwusb_speed != NULL)
+		speed = usbdev->hwusb_speed;
+
+	(void) printf("{\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
+	(void) printf("\"%s\":\"%s\",", USB_VENDOR_NAME, vendor);
+	(void) printf("\"%s\":\"%s\",", USB_PRODUCT_NAME, product);
+	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
+	(void) printf("\"%s\":\"%s\",", USB_VERSION, usbver);
+	(void) printf("\"%s\":\"%s\",", USB_SPEED, speed);
+	(void) printf("\"%s\":\"%s\",", DRIVERNM, usbdev->hwusb_drivernm);
+	(void) printf("\"%s\":%u,", DRIVERINST, usbdev->hwusb_driverinst);
+	(void) printf("\"%s\":\"%s\",", DEVICE_PATH, usbdev->hwusb_devpath);
+	(void) printf("\"%s\":\"%s\"", IS_INTERNAL,
+	    usbdev->hwusb_is_internal ? IS_TRUE : IS_FALSE);
+
+	(void) printf("}\n");
+
+	return (LL_WALK_NEXT);
+}
+
 int
 dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 {
@@ -562,6 +612,16 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	if (llist_walker(&(hwinfo->hwi_fans), dump_fan_json,
 	    &firstelem) != 0) {
 		hwg_error("error walking fans\n");
+		return (-1);
+	} else {
+		(void) printf("],\n");
+	}
+
+	(void) printf("\n\"%s\": [\n", USB_DEVICES);
+	firstelem = B_TRUE;
+	if (llist_walker(&(hwinfo->hwi_usbdevs), dump_usbdev_json,
+	    &firstelem) != 0) {
+		hwg_error("error walking usbdevs\n");
 		return (-1);
 	} else {
 		(void) printf("]\n");

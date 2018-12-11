@@ -176,6 +176,19 @@ typedef struct hwg_sp {
 	char *hwsp_ipv6_config_type;
 } hwg_sp_t;
 
+typedef struct hwg_usbdev {
+	struct llist *ll_prev;
+	struct llist *ll_next;
+	hwg_common_info_t hwusb_common_info;
+	char *hwusb_vendor;
+	char *hwusb_devpath;
+	char *hwusb_drivernm;
+	char *hwusb_version;
+	char *hwusb_speed;
+	uint32_t hwusb_driverinst;
+	boolean_t hwusb_is_internal;
+} hwg_usbdev_t;
+
 
 typedef struct hwg_chassis {
 	hwg_common_info_t hwch_common_info;
@@ -190,6 +203,7 @@ typedef struct hwg_info {
 	llist_t hwi_disks;
 	llist_t hwi_psus;
 	llist_t hwi_fans;
+	llist_t hwi_usbdevs;
 	hwg_motherboard_t *hwi_motherboard;
 	hwg_chassis_t *hwi_chassis;
 	hwg_sp_t *hwi_sp;
@@ -203,6 +217,7 @@ typedef struct hwg_cbarg {
 	hwg_dimm_slot_t *cb_currslot;
 	hwg_processor_t *cb_currchip;
 	hwg_pcidev_t *cb_currdev;
+	boolean_t cb_is_chassis_dev;
 } hwg_cbarg_t;
 
 #endif	/* _HW_GROK_H */

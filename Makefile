@@ -3,30 +3,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
-PROG=		hwgrok
-CC=		/opt/local/bin/cc
-CTFCONVERT=	/opt/onbld/bin/i386/ctfconvert
-CTFMERGE=	/opt/onbld/bin/i386/ctfmerge
+SUBDIRS = i386 amd64
 
-PROTO=		/
-CFLAGS=		-g -std=gnu99 -I$(PROTO)/usr/include
-LDFLAGS=	-lnvpair -L$(PROTO)/usr/lib/fm -ltopo -R/usr/lib/fm
+all: TARGET = all
+clean: TARGET = clean
+clobber: TARGET = clobber
 
-SRCS= hwgrok.c llist.c dump_json.c
+.KEEP_STATE:
 
-OBJS = $(SRCS:%.c=%.o)
+all clean clobber: $(SUBDIRS)
 
-.c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
-	$(CTFCONVERT) -l 0 $@
+$(SUBDIRS): FRC
+	@cd $@; pwd; $(MAKE) $(TARGET)
 
-$(PROG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS)
-	$(CTFMERGE) -l 0 -o $@ $(OBJS)
-
-all: $(PROG)
-
-clean clobber:
-	$(RM) $(PROG) $(OBJS)
+FRC:

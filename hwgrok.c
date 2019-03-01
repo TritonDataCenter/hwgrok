@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Copyright (c) 2018, Joyent, Inc.
+ * Copyright (c) 2019, Joyent, Inc.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -965,6 +965,10 @@ grok_sp(topo_hdl_t *thp, tnode_t *node, void *arg)
 	}
 	if (get_common_props(thp, node, &(sp->hwsp_common_info)) != 0) {
 		hwg_error("failure gathering common props\n");
+		goto err;
+	}
+	if (topo_prop_get_string(node, "network-config", "mac-address",
+	    &sp->hwsp_macaddr, &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto err;
 	}
 	if (topo_prop_get_string(node, "network-config", "ipv4-address",

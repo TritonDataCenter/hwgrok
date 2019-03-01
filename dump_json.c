@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Copyright (c) 2018, Joyent, Inc.
+ * Copyright (c) 2019, Joyent, Inc.
  */
 #include "hwgrok.h"
 
@@ -28,6 +28,7 @@
 #define	LABEL			"label"
 #define	LEDS			"leds"
 #define	LOGICAL_DISK		"logical-disk"
+#define	MACADDR			"mac-address"
 #define	MANUF			"manufacturer"
 #define	MEMORY			"memory"
 #define	MODE			"mode"
@@ -176,6 +177,10 @@ dump_sp_json(hwg_sp_t *sp)
 	(void) printf("\"%s\":{", SERVICE_PROCESSOR);
 	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
 	(void) printf("\"%s\":\"%s\",", FIRMWARE_REV, rev);
+
+	(void) printf("\"%s\":\"%s\",", MACADDR,
+	    sp->hwsp_macaddr != NULL ?
+	    sp->hwsp_macaddr : "");
 
 	(void) printf("\"%s\":\"%s\",", IPV4_ADDR,
 	    sp->hwsp_ipv4_addr != NULL ?

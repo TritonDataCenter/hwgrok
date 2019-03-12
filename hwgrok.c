@@ -578,7 +578,7 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	hwg_disk_t *disk;
 	hwg_common_info_t *cinfo;
 	int err;
-	char *capstr;
+	char *capstr = NULL;
 	uint32_t rpm;
 
 	if ((disk = topo_hdl_zalloc(thp, sizeof (hwg_disk_t))) == NULL) {
@@ -599,11 +599,6 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	    err != ETOPO_PROP_NOENT) {
 		goto err;
 	}
-	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE,
-	    "capacity-in-bytes", &capstr, &err) != 0 &&
-	    err != ETOPO_PROP_NOENT) {
-		goto err;
-	}
 	if (topo_prop_get_string(node, TOPO_PGROUP_IO, TOPO_IO_DEV_PATH,
 	    &disk->hwdk_devpath, &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto err;
@@ -616,8 +611,18 @@ grok_disk(topo_hdl_t *thp, tnode_t *node, void *arg)
 	    "speed-in-rpm", &disk->hwdk_speed) != 0) {
 		goto err;
 	}
-	disk->hwdk_size = (uint64_t)strtoll(capstr, NULL, 10);
-	topo_hdl_strfree(thp, capstr);
+	if (topo_prop_get_string(node, TOPO_PGROUP_STORAGE,
+	    "capacity-in-bytes", &capstr, &err) != 0 &&
+	    err != ETOPO_PROP_NOENT) {
+		goto err;
+	}
+	if (capstr != NULL)  {
+		disk->hwdk_size = (uint64_t)strtoll(capstr, NULL, 10);
+		topo_hdl_strfree(thp, capstr);
+	} else {
+		hwg_error("no capacity reported for drive: %s\n",
+		    cinfo->hwci_fmri);
+	}
 
 	llist_append(&(hwinfo->hwi_disks), disk);
 	/*

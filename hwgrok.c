@@ -1032,13 +1032,13 @@ grok_motherboard(topo_hdl_t *thp, tnode_t *node, void *arg)
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
 		goto err;
 	}
-	if (topo_prop_get_string(node, "motherboard-properties", "manufacturer",
-	    &(cinfo->hwci_manufacturer), &err) != 0 &&
-	    err != ETOPO_PROP_NOENT) {
+	if (topo_prop_get_string(node, TOPO_PGROUP_MOTHERBOARD,
+	    TOPO_PROP_MB_MANUFACTURER, &(cinfo->hwci_manufacturer),
+	    &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto err;
 	}
-	if (topo_prop_get_string(node, "motherboard-properties", "product",
-	    &(cinfo->hwci_model), &err) != 0 &&
+	if (topo_prop_get_string(node, TOPO_PGROUP_MOTHERBOARD,
+	    TOPO_PROP_MB_PRODUCT, &(cinfo->hwci_model), &err) != 0 &&
 	    err != ETOPO_PROP_NOENT) {
 		goto err;
 	}

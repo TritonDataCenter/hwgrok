@@ -7,8 +7,10 @@
 #
 PROG=		hwgrok
 CC=		/usr/bin/gcc
-CTFCONVERT=	/opt/onbld/bin/i386/ctfconvert
-CTFMERGE=	/opt/onbld/bin/i386/ctfmerge
+ARCH=		$(shell uname -p)
+CTFTOOLS=	/opt/onbld/bin/$(ARCH)
+CTFCONVERT=	$(CTFTOOLS)/ctfconvert
+CTFMERGE=	$(CTFTOOLS)/ctfmerge
 
 PROTO=		/
 CFLAGS=		-g -std=gnu99 -I$(PROTO)/usr/include

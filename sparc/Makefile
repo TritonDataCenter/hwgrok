@@ -5,17 +5,14 @@
 #
 # Copyright (c) 2019, Joyent, Inc.
 #
-SUBDIRS = $(shell isainfo)
+include ../Makefile.com
 
-all: TARGET = all
-clean: TARGET = clean
-clobber: TARGET = clobber
+LDFLAGS=	-lnvpair -L$(PROTO)/usr/lib/fm -ltopo -R/usr/lib/fm
 
-.KEEP_STATE:
+%.o: ../%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+	$(CTFCONVERT) -l 0 $@
 
-all clean clobber: $(SUBDIRS)
-
-$(SUBDIRS): FRC
-	@cd $@; pwd; $(MAKE) $(TARGET)
-
-FRC:
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+	$(CTFMERGE) -l 0 -o $@ $(OBJS)

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include <fm/libtopo.h>
 #include <fm/topo_hc.h>
 #include <sys/fm/protocol.h>

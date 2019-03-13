@@ -6,7 +6,7 @@
 # Copyright (c) 2019, Joyent, Inc.
 #
 PROG=		hwgrok
-CC=		/opt/local/bin/cc
+CC=		/usr/bin/gcc
 CTFCONVERT=	/opt/onbld/bin/i386/ctfconvert
 CTFMERGE=	/opt/onbld/bin/i386/ctfmerge
 

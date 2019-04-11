@@ -79,6 +79,34 @@
 #define	IS_TRUE			"true"
 #define	IS_FALSE		"false"
 
+/*
+ * This replaces single and double-quote characters from string JSON values.
+ * Caller must free the returned string.
+ */
+static char *
+clean_str(const char *in)
+{
+	char *buf, c;
+	const char *cp;
+	size_t strsz;
+
+	strsz = strlen(in);
+	cp = in;
+
+	if ((buf = calloc(strsz, sizeof (char))) == NULL)
+		return (NULL);
+
+	for (int i = 0; i < strsz - 1; i++) {
+		c = *cp;
+		if (c == '\'' || c == '"')
+			buf[i] = ' ';
+		else
+			buf[i] = c;
+		cp++;
+	}
+	return (buf);
+}
+
 static int
 dump_sensor_json(llist_t *node, void *arg)
 {
@@ -358,12 +386,20 @@ dump_pcidev_json(llist_t *node, void *arg)
 
 	(void) printf("{\"%s\":\"%s\",", LABEL, cinfo->hwci_label);
 
-	if (pcidev->hwpci_vendor != NULL)
-		vendor = pcidev->hwpci_vendor;
-	if (pcidev->hwpci_devnm != NULL)
-		devnm = pcidev->hwpci_devnm;
-	if (pcidev->hwpci_subsysnm != NULL)
-		subsysnm = pcidev->hwpci_subsysnm;
+	if (pcidev->hwpci_vendor == NULL)
+		vendor = strdup(UNKNOWN);
+	else
+		vendor = clean_str(pcidev->hwpci_vendor);
+
+	if (pcidev->hwpci_devnm == NULL)
+		devnm = strdup(UNKNOWN);
+	else
+		devnm = clean_str(pcidev->hwpci_devnm);
+
+	if (pcidev->hwpci_subsysnm == NULL)
+		subsysnm = strdup(UNKNOWN);
+	else
+		subsysnm = clean_str(pcidev->hwpci_subsysnm);
 
 	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
 	(void) printf("\"%s\":\"%s\",", PCI_VENDOR_NAME, vendor);
@@ -376,6 +412,10 @@ dump_pcidev_json(llist_t *node, void *arg)
 	(void) printf("\"%s\":\"%s\"", DEVICE_PATH, pcidev->hwpci_devpath);
 
 	(void) printf("}\n");
+
+	free(vendor);
+	free(devnm);
+	free(subsysnm);
 
 	return (LL_WALK_NEXT);
 }

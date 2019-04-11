@@ -89,14 +89,15 @@ clean_str(const char *in)
 	char *buf, c;
 	const char *cp;
 	size_t strsz;
+	int i;
 
-	strsz = strlen(in);
+	strsz = strlen(in) + 1;
 	cp = in;
 
 	if ((buf = calloc(strsz, sizeof (char))) == NULL)
 		return (NULL);
 
-	for (int i = 0; i < strsz - 1; i++) {
+	for (i = 0; i < strsz - 1; i++) {
 		c = *cp;
 		if (c == '\'' || c == '"')
 			buf[i] = ' ';
@@ -104,6 +105,8 @@ clean_str(const char *in)
 			buf[i] = c;
 		cp++;
 	}
+	buf[i] = '\0';
+
 	return (buf);
 }
 

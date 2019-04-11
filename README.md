@@ -14,9 +14,9 @@ Sample output:
       {
         "name": "System Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 34,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 35,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -42,6 +42,7 @@ Sample output:
   "service-processor": {
     "hc-fmri": "hc:///motherboard=0/sp=0",
     "firmware-revision": "1.40",
+    "mac-address": "ac:1f:6b:61:53:29",
     "ipv4-address": "172.20.1.28",
     "ipv4-subnet": "255.255.254.0",
     "ipv4-gateway": "172.20.0.1",
@@ -50,15 +51,15 @@ Sample output:
   "motherboard": {
     "hc-fmri": "hc:///motherboard=0",
     "manufacturer": "Supermicro",
-    "model": "unknown",
+    "model": "X11DPH-T",
     "firmware-revision": "1.01",
     "sensors": [
       {
         "name": "PCH Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 58,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 59,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -70,9 +71,9 @@ Sample output:
       {
         "name": "Peripheral Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 50,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 52,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -84,9 +85,9 @@ Sample output:
       {
         "name": "MB_10G Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 56,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 57,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -98,9 +99,9 @@ Sample output:
       {
         "name": "VRMCpu1SA Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 43,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 45,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -112,9 +113,9 @@ Sample output:
       {
         "name": "VRMCpu1IO Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 51,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 52,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -126,8 +127,8 @@ Sample output:
       {
         "name": "VRMCpu1CCH Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 42,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
@@ -140,8 +141,8 @@ Sample output:
       {
         "name": "VRMCpu2IO Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 46,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
@@ -154,9 +155,9 @@ Sample output:
       {
         "name": "VRMP1ABC Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 48,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 49,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -168,9 +169,9 @@ Sample output:
       {
         "name": "VRMP1DEF Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 39,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 38,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -182,9 +183,9 @@ Sample output:
       {
         "name": "VRMP2ABC Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 48,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 49,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -196,8 +197,8 @@ Sample output:
       {
         "name": "VRMP2DEF Temp",
         "type": "temperature",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 43,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
@@ -210,9 +211,9 @@ Sample output:
       {
         "name": "12V",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 12,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 11.941,
         "units": "VOLTS",
         "threshold-lower-non-critical": 10.761,
         "threshold-lower-critical": 10.289,
@@ -224,8 +225,8 @@ Sample output:
       {
         "name": "5VCC",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 5.18,
         "units": "VOLTS",
         "threshold-lower-non-critical": 4.49,
@@ -238,9 +239,9 @@ Sample output:
       {
         "name": "3.3VCC",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 3.435,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 3.418,
         "units": "VOLTS",
         "threshold-lower-non-critical": 2.959,
         "threshold-lower-critical": 2.823,
@@ -252,15 +253,15 @@ Sample output:
       {
         "name": "VBAT",
         "type": "BATTERY",
-        "state": 65284,
+        "state": 32516,
         "state-description": "PRESENCE"
       },
       {
         "name": "Vcpu1",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 1.881,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 1.872,
         "units": "VOLTS",
         "threshold-lower-non-critical": 1.404,
         "threshold-lower-critical": 1.26,
@@ -272,9 +273,9 @@ Sample output:
       {
         "name": "Vcpu2",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 1.89,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 1.881,
         "units": "VOLTS",
         "threshold-lower-non-critical": 1.404,
         "threshold-lower-critical": 1.26,
@@ -286,8 +287,8 @@ Sample output:
       {
         "name": "5VSB",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 5.279,
         "units": "VOLTS",
         "threshold-lower-non-critical": 4.473,
@@ -300,9 +301,9 @@ Sample output:
       {
         "name": "3.3VSB",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
-        "reading": 3.503,
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
+        "reading": 3.486,
         "units": "VOLTS",
         "threshold-lower-non-critical": 2.959,
         "threshold-lower-critical": 2.891,
@@ -314,8 +315,8 @@ Sample output:
       {
         "name": "1.8V PCH",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 1.854,
         "units": "VOLTS",
         "threshold-lower-non-critical": 1.62,
@@ -328,8 +329,8 @@ Sample output:
       {
         "name": "PVNN PCH",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 1.049,
         "units": "VOLTS",
         "threshold-lower-non-critical": 0.895,
@@ -342,8 +343,8 @@ Sample output:
       {
         "name": "1.05V PCH",
         "type": "voltage",
-        "state": 192,
-        "state-description": "0xc0",
+        "state": 0,
+        "state-description": "NO_STATES_ASSERTED",
         "reading": 1.071,
         "units": "VOLTS",
         "threshold-lower-non-critical": 0.945,
@@ -401,9 +402,9 @@ Sample output:
           {
             "name": "P1-DIMMA1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 37,
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
+            "reading": 36,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -430,8 +431,8 @@ Sample output:
           {
             "name": "P1-DIMMA2 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 37,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -459,9 +460,9 @@ Sample output:
           {
             "name": "P1-DIMMB1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 38,
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
+            "reading": 37,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -488,9 +489,9 @@ Sample output:
           {
             "name": "P1-DIMMC1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 39,
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
+            "reading": 38,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -517,8 +518,8 @@ Sample output:
           {
             "name": "P1-DIMMD1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 44,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -546,9 +547,9 @@ Sample output:
           {
             "name": "P1-DIMMD2 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 40,
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
+            "reading": 41,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -575,8 +576,8 @@ Sample output:
           {
             "name": "P1-DIMME1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -604,8 +605,8 @@ Sample output:
           {
             "name": "P1-DIMMF1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -633,8 +634,8 @@ Sample output:
           {
             "name": "P2-DIMMA1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -662,8 +663,8 @@ Sample output:
           {
             "name": "P2-DIMMA2 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 48,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -691,9 +692,9 @@ Sample output:
           {
             "name": "P2-DIMMB1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 48,
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
+            "reading": 49,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -720,8 +721,8 @@ Sample output:
           {
             "name": "P2-DIMMC1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 47,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -749,8 +750,8 @@ Sample output:
           {
             "name": "P2-DIMMD1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 41,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -778,9 +779,9 @@ Sample output:
           {
             "name": "P2-DIMMD2 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
-            "reading": 43,
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
+            "reading": 42,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
             "threshold-lower-critical": 5,
@@ -807,8 +808,8 @@ Sample output:
           {
             "name": "P2-DIMME1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 40,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -836,8 +837,8 @@ Sample output:
           {
             "name": "P2-DIMMF1 Temp",
             "type": "temperature",
-            "state": 192,
-            "state-description": "0xc0",
+            "state": 0,
+            "state-description": "NO_STATES_ASSERTED",
             "reading": 38,
             "units": "DEGREES_C",
             "threshold-lower-non-critical": 10,
@@ -880,7 +881,7 @@ Sample output:
       "pci-device-name": "unknown",
       "pci-subsystem-name": "unknown",
       "device-driver-name": "pcieb",
-      "device-driver-instance": 4,
+      "device-driver-instance": 3,
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0"
     },
     {
@@ -890,7 +891,7 @@ Sample output:
       "pci-device-name": "unknown",
       "pci-subsystem-name": "unknown",
       "device-driver-name": "pcieb",
-      "device-driver-instance": 5,
+      "device-driver-instance": 4,
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0/pci8086,37c5@3"
     },
     {
@@ -904,43 +905,43 @@ Sample output:
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0/pci8086,37c5@3/pci15d9,37d2@0,1"
     },
     {
-      "label": "CPU2 SLOT 2 PCI-E 3.0 X16",
-      "hc-fmri": "hc:///motherboard=0/hostbridge=3/pciexrc=3/pciexbus=28/pciexdev=0",
+      "label": "CPU2 SLOT 4 PCI-E 3.0 X16",
+      "hc-fmri": "hc:///motherboard=0/hostbridge=3/pciexrc=3/pciexbus=59/pciexdev=0",
       "pci-vendor-name": "Intel Corporation",
-      "pci-device-name": "82574L Gigabit Network Connection",
-      "pci-subsystem-name": "Gigabit CT Desktop Adapter",
-      "device-driver-name": "e1000g",
-      "device-driver-instance": 0,
-      "device-path": "/pci@14,0/pci8086,2032@2/pci8086,a01f@0"
+      "pci-device-name": "82599ES 10-Gigabit SFI/SFP+ Network Connection",
+      "pci-subsystem-name": "Ethernet Server Adapter X520-2",
+      "device-driver-name": "ixgbe",
+      "device-driver-instance": 1,
+      "device-path": "/pci@34,0/pci8086,2032@2/pci8086,c@0,1"
     },
     {
       "label": "CPU1 SLOT 7 PCI-E 3.0 X8",
       "hc-fmri": "hc:///motherboard=0/hostbridge=4/pciexrc=4/pciexbus=94/pciexdev=0",
-      "pci-vendor-name": "LSI Logic / Symbios Logic",
+      "pci-vendor-name": "Broadcom / LSI",
       "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
-      "pci-subsystem-name": "unknown",
+      "pci-subsystem-name": "AOC-S3008L-L8e",
       "device-driver-name": "mpt_sas",
-      "device-driver-instance": 2,
+      "device-driver-instance": 0,
       "device-path": "/pci@56,0/pci8086,2030@0/pci15d9,808@0"
     },
     {
       "label": "CPU1 SLOT 3 PCI-E 3.0 X8",
       "hc-fmri": "hc:///motherboard=0/hostbridge=5/pciexrc=5/pciexbus=134/pciexdev=0",
-      "pci-vendor-name": "LSI Logic / Symbios Logic",
+      "pci-vendor-name": "Broadcom / LSI",
       "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
-      "pci-subsystem-name": "unknown",
+      "pci-subsystem-name": "AOC-S3008L-L8e",
       "device-driver-name": "mpt_sas",
-      "device-driver-instance": 1,
+      "device-driver-instance": 2,
       "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0"
     },
     {
       "label": "CPU2 SLOT 5 PCI-E 3.0 X16",
       "hc-fmri": "hc:///motherboard=0/hostbridge=6/pciexrc=6/pciexbus=216/pciexdev=0",
-      "pci-vendor-name": "LSI Logic / Symbios Logic",
+      "pci-vendor-name": "Broadcom / LSI",
       "pci-device-name": "SAS3008 PCI-Express Fusion-MPT SAS-3",
-      "pci-subsystem-name": "unknown",
+      "pci-subsystem-name": "AOC-S3008L-L8e",
       "device-driver-name": "mpt_sas",
-      "device-driver-instance": 0,
+      "device-driver-instance": 1,
       "device-path": "/pci@ce,0/pci8086,2030@0/pci15d9,808@0"
     }
   ],
@@ -970,6 +971,8 @@ Sample output:
         "serial-number": "0HWZDBUA",
         "firmware-revision": "C360",
         "size-in-bytes": 1245995008,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@1/disk@w5000cca0496fa475,0",
+        "logical-disk": "c3t5000CCA0496FA475d0",
         "sensors": [
           {
             "name": "temp",
@@ -1007,11 +1010,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@2/disk@w5000cca031029f85,0",
+        "logical-disk": "c4t5000CCA031029F85d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 38,
+            "reading": 41,
             "units": "DEGREES_C"
           }
         ],
@@ -1044,11 +1049,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@4/disk@w5000cca02c130f79,0",
+        "logical-disk": "c5t5000CCA02C130F79d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 40,
+            "reading": 44,
             "units": "DEGREES_C"
           }
         ],
@@ -1081,11 +1088,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@8/disk@w5000cca0310200e1,0",
+        "logical-disk": "c6t5000CCA0310200E1d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 40,
+            "reading": 44,
             "units": "DEGREES_C"
           }
         ],
@@ -1118,11 +1127,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@10/disk@w5000cca03102a121,0",
+        "logical-disk": "c7t5000CCA03102A121d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 41,
+            "reading": 44,
             "units": "DEGREES_C"
           }
         ],
@@ -1155,11 +1166,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@20/disk@w5000cca031026069,0",
+        "logical-disk": "c8t5000CCA031026069d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 41,
+            "reading": 45,
             "units": "DEGREES_C"
           }
         ],
@@ -1192,11 +1205,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@40/disk@w5000cca031025fed,0",
+        "logical-disk": "c9t5000CCA031025FEDd0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 41,
+            "reading": 45,
             "units": "DEGREES_C"
           }
         ],
@@ -1229,11 +1244,13 @@ Sample output:
         "firmware-revision": "ADB0",
         "size-in-bytes": 1706716160,
         "speed-in-rpm": 10520,
+        "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@80/disk@w5000cca02c0ea585,0",
+        "logical-disk": "c10t5000CCA02C0EA585d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 42,
+            "reading": 46,
             "units": "DEGREES_C"
           }
         ],
@@ -1444,13 +1461,62 @@ Sample output:
       "label": "Rear Disk 0",
       "hc-fmri": "hc:///chassis=0/bay=24",
       "sensors": [],
-      "leds": []
+      "leds": [
+        {
+          "type": "SERVICE",
+          "mode": "off"
+        },
+        {
+          "type": "LOCATE",
+          "mode": "off"
+        }
+      ],
+      "disk": {
+        "hc-fmri": "hc:///chassis=0/bay=24/disk=0",
+        "manufacturer": "Samsung",
+        "model": "SSD 883 DCT 1.92TB",
+        "serial-number": "S483NW0K600158N",
+        "firmware-revision": "HXT7004Q",
+        "size-in-bytes": 533028864,
+        "device-path": "/pci@0,0/pci15d9,981@11,5/disk@4,0",
+        "logical-disk": "c1t4d0",
+        "sensors": [
+          {
+            "name": "temp",
+            "type": "(null)",
+            "reading": 0,
+            "units": "(null)"
+          }
+        ],
+        "leds": []
+      }
     },
     {
       "label": "Rear Disk 1",
       "hc-fmri": "hc:///chassis=0/bay=25",
       "sensors": [],
-      "leds": []
+      "leds": [
+        {
+          "type": "SERVICE",
+          "mode": "off"
+        },
+        {
+          "type": "LOCATE",
+          "mode": "off"
+        }
+      ],
+      "disk": {
+        "hc-fmri": "hc:///chassis=0/port=3/usb-device=0/disk=0",
+        "manufacturer": "Verbatim",
+        "model": "STORE N GO",
+        "serial-number": "E2FF6CAD256CB6DEF3E7",
+        "firmware-revision": "8.07",
+        "size-in-bytes": 2749366272,
+        "device-path": "/pci@0,0/pci15d9,981@14/storage@3/disk@0,0",
+        "logical-disk": "c2t0d0",
+        "sensors": [],
+        "leds": []
+      }
     }
   ],
   "power-supplies": [
@@ -1495,9 +1561,9 @@ Sample output:
         {
           "name": "FAN1",
           "type": "speed",
-          "state": 192,
-          "state-description": "0xc0",
-          "reading": 2800,
+          "state": 0,
+          "state-description": "NO_STATES_ASSERTED",
+          "reading": 3200,
           "units": "RPM",
           "threshold-lower-non-critical": 700,
           "threshold-lower-critical": 500,
@@ -1516,9 +1582,9 @@ Sample output:
         {
           "name": "FAN2",
           "type": "speed",
-          "state": 192,
-          "state-description": "0xc0",
-          "reading": 2900,
+          "state": 0,
+          "state-description": "NO_STATES_ASSERTED",
+          "reading": 3300,
           "units": "RPM",
           "threshold-lower-non-critical": 700,
           "threshold-lower-critical": 500,
@@ -1561,8 +1627,8 @@ Sample output:
         {
           "name": "FANA",
           "type": "speed",
-          "state": 192,
-          "state-description": "0xc0",
+          "state": 0,
+          "state-description": "NO_STATES_ASSERTED",
           "reading": 2200,
           "units": "RPM",
           "threshold-lower-non-critical": 700,
@@ -1581,6 +1647,45 @@ Sample output:
       "sensors": [],
       "leds": []
     }
+  ],
+  "usb-devices": [
+    {
+      "hc-fmri": "hc:///motherboard=0/port=1/usb-device=0",
+      "usb-vendor-name": "unknown",
+      "usb-product-name": "unknown",
+      "serial-number": "unknown",
+      "usb-version": "2.0",
+      "usb-speed": "high-speed",
+      "device-driver-name": "hubd",
+      "device-driver-instance": 0,
+      "device-path": "/pci@0,0/pci15d9,981@14/hub@6",
+      "is-internal": "true"
+    },
+    {
+      "hc-fmri": "hc:///motherboard=0/port=1/usb-device=0/port=0/usb-device=0",
+      "usb-vendor-name": "unknown",
+      "usb-product-name": "unknown",
+      "serial-number": "unknown",
+      "usb-version": "1.1",
+      "usb-speed": "low-speed",
+      "device-driver-name": "usb_mid",
+      "device-driver-instance": 0,
+      "device-path": "/pci@0,0/pci15d9,981@14/hub@6/device@1",
+      "is-internal": "true"
+    },
+    {
+      "hc-fmri": "hc:///chassis=0/port=3/usb-device=0",
+      "usb-vendor-name": "Verbatim",
+      "usb-product-name": "STORE-N-GO",
+      "serial-number": "E2FF6CAD256CB6DEF3E7",
+      "usb-version": "2.0",
+      "usb-speed": "high-speed",
+      "device-driver-name": "scsa2usb",
+      "device-driver-instance": 0,
+      "device-path": "/pci@0,0/pci15d9,981@14/storage@3",
+      "is-internal": "false"
+    }
   ]
 }
+
 ```

@@ -16,7 +16,7 @@ The build process produces both a 32 and a 64-bit executable.  The 64-bit execut
 
 For now, only use the 32-bit version, which will be located in the ```i386``` subdirectory after the build.
 
-##Sample output
+## Sample output
 
 ```
 # ./hwgrok | json

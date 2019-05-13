@@ -1,7 +1,22 @@
 # hwgrok
 This utility distills the topo snapshot down into a higher-level representation of the hardware configuration and emits that as a single JSON object, which in turn could be consumed by higher-level management software.
 
-Sample output:
+## Build instructions:
+
+hwgrok must be built on an illumos-based system.  It has been successfully built on OpenIndiana and in a SmartOS zone.  The makefile uses GNU make syntax, so you must use ***gmake*** and not ```/usr/ccs/bin/make```.
+
+To build, run:
+```
+% gmake all
+```
+
+The build process produces both a 32 and a 64-bit executable.  The 64-bit executable is not currently functional as it depends on the following, unimplemented change in libtopo:
+
+[10503 Should build and deliver 64-bit libtopo plugins](https://www.illumos.org/issues/10503)
+
+For now, only use the 32-bit version, which will be located in the ```i386``` subdirectory after the build.
+
+##Sample output
 
 ```
 # ./hwgrok | json

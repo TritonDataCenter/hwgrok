@@ -6,7 +6,7 @@
 # Copyright (c) 2019, Joyent, Inc.
 #
 PROG=		hwgrok
-CC=		/usr/bin/gcc
+CC=		$(shell which gcc)
 ARCH=		$(shell uname -p)
 CTFTOOLS=	/opt/onbld/bin/$(ARCH)
 CTFCONVERT=	$(CTFTOOLS)/ctfconvert

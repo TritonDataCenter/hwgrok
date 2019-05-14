@@ -10,10 +10,10 @@ To build, run:
 % gmake all
 ```
 
-The makefile expects to find gcc at /usr/bin/gcc (the default location on OpenIndiana).  On SmartOS, gcc is likely under /opt/local/bin.  You can override the default gcc location in the makefile by specifying an alternative value for the CC macro - for example, on SmartOS do:
+The makefile expects to find gcc in your PATH.  If gcc is not in your path then you will need to manually specify the path to gcc by overriding the value of the CC macro - for example:
 
 ```
-% make CC=/opt/local/bin/gcc all
+% gmake CC=/opt/local/bin/gcc all
 ```
 
 The build process produces both a 32 and a 64-bit executable.  The 64-bit executable is not currently functional as it depends on the following, unimplemented change in libtopo:

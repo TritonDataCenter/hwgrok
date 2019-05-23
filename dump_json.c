@@ -3,9 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Copyright (c) 2019, Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 #include "hwgrok.h"
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 
 /*
  * JSON property names
@@ -446,7 +448,7 @@ dump_disk_json(hwg_disk_t *disk)
 	(void) printf("\"%s\":\"%s\",", MODEL, model);
 	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
 	(void) printf("\"%s\":\"%s\",", FIRMWARE_REV, rev);
-	(void) printf("\"%s\":%u,", SZ_BYTES, disk->hwdk_size);
+	(void) printf("\"%s\":%"PRIu64",", SZ_BYTES, disk->hwdk_size);
 	if (disk->hwdk_speed.hnp_is_set)
 		(void) printf("\"%s\":%u,", SPEED_RPM,
 		    disk->hwdk_speed.hnp_u32);

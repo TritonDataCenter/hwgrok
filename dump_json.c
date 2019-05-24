@@ -6,7 +6,7 @@
  * Copyright 2019 Joyent, Inc.
  */
 #include "hwgrok.h"
-#define __STDC_FORMAT_MACROS
+#define	__STDC_FORMAT_MACROS
 #include <inttypes.h>
 
 /*
@@ -363,9 +363,9 @@ dump_processor_json(llist_t *node, void *arg)
 	(void) printf("\"%s\":\"%s\",", MODEL, model);
 
 	(void) printf("\"%s\":\"%s\",", PROC_BRAND, brand);
-	(void) printf("\"%s\":\"%u\",", PROC_FAMILY, chip->hwpr_family);
-	(void) printf("\"%s\":\"%u\",", PROC_MODEL, chip->hwpr_model);
-	(void) printf("\"%s\":\"%u\",", PROC_STEPPING, chip->hwpr_stepping);
+	(void) printf("\"%s\":%u,", PROC_FAMILY, chip->hwpr_family);
+	(void) printf("\"%s\":%u,", PROC_MODEL, chip->hwpr_model);
+	(void) printf("\"%s\":%u,", PROC_STEPPING, chip->hwpr_stepping);
 	(void) printf("\"%s\":%u,", NUM_CORES, chip->hwpr_num_cores);
 	(void) printf("\"%s\":%u,", NUM_THREADS,
 	    (chip->hwpr_num_threads / chip->hwpr_num_cores));
@@ -508,7 +508,7 @@ dump_dimm_json(hwg_dimm_t *dimm)
 	(void) printf("\"%s\":\"%s\",", PARTNO, part);
 	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
 	(void) printf("\"%s\":\"%s\",", TYPE, dimm->hwdi_type);
-	(void) printf("\"%s\":\"%llu\",", SZ_BYTES, dimm->hwdi_size);
+	(void) printf("\"%s\":%llu,", SZ_BYTES, dimm->hwdi_size);
 
 	dump_facilities_json(cinfo);
 

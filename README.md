@@ -22,6 +22,12 @@ The build process produces both a 32 and a 64-bit executable.  The 64-bit execut
 
 For now, only use the 32-bit version, which will be located in the ```i386``` subdirectory after the build.
 
+```hwgrok``` leverages the very latest changes in the OS and as such will likely fail to build on illumos-based systems that aren't running fairly up-to-date bits.  You can workaround this by forcing the build to satisfy build-time dependencies by referencing a proto area instead of the installed headers/libraries on the build system.  Do this by specifying the path to the proto area of a built illumos-gate repo via the PROTO macro - for example:
+
+```
+% gmake PROTO=/ws/my-illumos-ws/proto all
+```
+
 ## Sample output
 
 ```

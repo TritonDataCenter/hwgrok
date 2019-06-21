@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Copyright (c) 2019, Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,12 +21,12 @@ extern int dump_hw_config_json(hwg_info_t *, char *);
 #define	topo_list_next(elem)	((void *)(((topo_list_t *)(elem))->l_next))
 
 static const char *pname;
-static const char optstr[] = "R:";
+static const char optstr[] = "hR:v";
 
 static void
 usage()
 {
-	(void) fprintf(stderr, "\n%s [-R root]\n\n", pname);
+	(void) fprintf(stderr, "\n%s [-h][-R root][-v]\n\n", pname);
 }
 
 void
@@ -853,6 +853,22 @@ grok_pcidev(topo_hdl_t *thp, tnode_t *node, void *arg)
 		hwg_free_pcidev((struct llist *)pcidev, thp);
 		return (-1);
 	}
+	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_PCI,
+	    TOPO_PCI_MAX_WIDTH, &pcidev->hwpci_maxlanes) != 0) {
+		return (-1);
+	}
+	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_PCI,
+	    TOPO_PCI_CUR_WIDTH, &pcidev->hwpci_currlanes) != 0) {
+		return (-1);
+	}
+	if (hwg_get_prop(node, TOPO_TYPE_UINT64, TOPO_PGROUP_PCI,
+	    TOPO_PCI_MAX_SPEED, &pcidev->hwpci_maxspeed) != 0) {
+		return (-1);
+	}
+	if (hwg_get_prop(node, TOPO_TYPE_UINT64, TOPO_PGROUP_PCI,
+	    TOPO_PCI_CUR_SPEED, &pcidev->hwpci_currspeed) != 0) {
+		return (-1);
+	}
 	llist_append(&(hwinfo->hwi_pcidevs), pcidev);
 	cbarg->cb_currdev = pcidev;
 
@@ -1128,7 +1144,7 @@ main(int argc, char *argv[])
 	topo_hdl_t *thp;
 	topo_walk_t *twp;
 	char c, *root = "/", *type = "all";
-	int err;
+	int err, status = EXIT_FAILURE;
 	hwg_info_t hwinfo = { 0 };
 	hwg_cbarg_t cbarg = { 0 };
 
@@ -1140,9 +1156,14 @@ main(int argc, char *argv[])
 			case 'R':
 				root = optarg;
 				break;
+			case 'v':
+				(void) printf("%s\n", HWGROK_VERSION);
+				exit(EXIT_SUCCESS);
+			case 'h':
+				/* FALLTHROUGH */
 			default:
 				usage();
-				return (2);
+				return (EXIT_USAGE);
 			}
 		}
 	}
@@ -1172,10 +1193,11 @@ main(int argc, char *argv[])
 	topo_walk_fini(twp);
 
 	dump_hw_config_json(&hwinfo, type);
+	status = EXIT_SUCCESS;
 out:
 	if (thp != NULL) {
 		topo_snap_release(thp);
 		topo_close(thp);
 	}
-	return (0);
+	return (status);
 }

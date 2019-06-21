@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Copyright (c) 2018, Joyent, Inc.
+ * Copyright 2019 Joyent, Inc.
  */
 #ifndef	_HWGROK_H
 #define	_HWGROK_H
@@ -18,6 +18,9 @@
 #include <sys/varargs.h>
 
 #include "llist.h"
+
+#define	EXIT_USAGE	2
+#define	HWGROK_VERSION	"20190621a"
 
 extern void hwg_debug(const char *, ...);
 extern void hwg_error(const char *, ...);
@@ -146,6 +149,10 @@ typedef struct hwg_pcidev {
 	char *hwpci_drivernm;
 	hwg_numeric_prop_t hwpci_driverinst;
 	boolean_t hwpci_is_onboard;
+	hwg_numeric_prop_t hwpci_maxlanes;
+	hwg_numeric_prop_t hwpci_currlanes;
+	hwg_numeric_prop_t hwpci_maxspeed;
+	hwg_numeric_prop_t hwpci_currspeed;
 } hwg_pcidev_t;
 
 typedef struct hwg_psu {

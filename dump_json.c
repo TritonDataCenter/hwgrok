@@ -13,6 +13,8 @@
  * JSON property names
  */
 #define	CHASSIS			"chassis"
+#define	CURRLANES		"current-lanes"
+#define	CURRSPEED		"current-speed"
 #define	DEVICE_PATH		"device-path"
 #define	DIMM			"dimm"
 #define	DISK			"disk"
@@ -32,6 +34,8 @@
 #define	LOGICAL_DISK		"logical-disk"
 #define	MACADDR			"mac-address"
 #define	MANUF			"manufacturer"
+#define	MAXLANES		"max-lanes"
+#define	MAXSPEED		"max-speed"
 #define	MEMORY			"memory"
 #define	MODE			"mode"
 #define	MODEL			"model"
@@ -414,6 +418,18 @@ dump_pcidev_json(llist_t *node, void *arg)
 	if (pcidev->hwpci_driverinst.hnp_is_set)
 		(void) printf("\"%s\":%u,", DRIVERINST,
 		    pcidev->hwpci_driverinst.hnp_u32);
+	if (pcidev->hwpci_maxlanes.hnp_is_set)
+		(void) printf("\"%s\":%u,", MAXLANES,
+		    pcidev->hwpci_maxlanes.hnp_u32);
+	if (pcidev->hwpci_currlanes.hnp_is_set)
+		(void) printf("\"%s\":%u,", CURRLANES,
+		    pcidev->hwpci_currlanes.hnp_u32);
+	if (pcidev->hwpci_maxspeed.hnp_is_set)
+		(void) printf("\"%s\":%"PRIu64",", MAXSPEED,
+		    pcidev->hwpci_maxspeed.hnp_u64);
+	if (pcidev->hwpci_currspeed.hnp_is_set)
+		(void) printf("\"%s\":%"PRIu64",", CURRSPEED,
+		    pcidev->hwpci_currspeed.hnp_u64);
 	(void) printf("\"%s\":\"%s\"", DEVICE_PATH, pcidev->hwpci_devpath);
 
 	(void) printf("}\n");

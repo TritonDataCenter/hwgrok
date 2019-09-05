@@ -20,7 +20,7 @@
 #include "llist.h"
 
 #define	EXIT_USAGE	2
-#define	HWGROK_VERSION	"20190621a"
+#define	HWGROK_VERSION	"20190905"
 
 extern void hwg_debug(const char *, ...);
 extern void hwg_error(const char *, ...);
@@ -107,18 +107,9 @@ typedef struct hwg_dimm {
 	struct llist *ll_prev;
 	struct llist *ll_next;
 	hwg_common_info_t hwdi_common_info;
-	uint64_t hwdi_size;
-	char *hwdi_type;
+	char *hwdi_size;
+	boolean_t hwdi_ecc_supp;
 } hwg_dimm_t;
-
-typedef struct hwg_dimm_slot {
-	struct llist *ll_prev;
-	struct llist *ll_next;
-	hwg_common_info_t hwds_common_info;
-	char *hwds_formfactor;
-	hwg_dimm_t *hwds_dimm;
-	boolean_t hwds_present;
-} hwg_dimm_slot_t;
 
 typedef struct hwg_disk {
 	struct llist *ll_prev;
@@ -202,7 +193,6 @@ typedef struct hwg_chassis {
 } hwg_chassis_t;
 
 typedef struct hwg_info {
-	llist_t hwi_dimm_slots;
 	llist_t hwi_disk_bays;
 	llist_t hwi_processors;
 	llist_t hwi_pcidevs;
@@ -221,10 +211,10 @@ typedef struct hwg_cbarg {
 	char *cb_nodename;
 	int cb_nodeinst;
 	hwg_disk_bay_t *cb_currbay;
-	hwg_dimm_slot_t *cb_currslot;
 	hwg_processor_t *cb_currchip;
 	hwg_pcidev_t *cb_currdev;
 	boolean_t cb_is_chassis_dev;
+	boolean_t cb_ecc_supp;
 } hwg_cbarg_t;
 
 #endif	/* _HW_GROK_H */

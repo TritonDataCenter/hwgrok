@@ -95,21 +95,8 @@ static void
 hwg_free_dimm(topo_hdl_t *thp, hwg_dimm_t *dimm)
 {
 	hwg_free_common(thp, &dimm->hwdi_common_info);
-	topo_hdl_strfree(thp, dimm->hwdi_type);
+	topo_hdl_strfree(thp, dimm->hwdi_size);
 	topo_hdl_free(thp, dimm, sizeof (hwg_dimm_t));
-}
-
-static void
-hwg_free_dimm_slot(llist_t *node, void *arg)
-{
-	hwg_dimm_slot_t *dimmslot = (hwg_dimm_slot_t *)node;
-	topo_hdl_t *thp = (topo_hdl_t *)arg;
-
-	hwg_free_common(thp, &dimmslot->hwds_common_info);
-	topo_hdl_strfree(thp, dimmslot->hwds_formfactor);
-	if (dimmslot->hwds_dimm != NULL)
-		hwg_free_dimm(thp, dimmslot->hwds_dimm);
-	topo_hdl_free(thp, dimmslot, sizeof (hwg_dimm_slot_t));
 }
 
 static void
@@ -741,6 +728,26 @@ grok_psu(topo_hdl_t *thp, tnode_t *node, void *arg)
 }
 
 static int
+grok_mem_ctrl(topo_hdl_t *thp, tnode_t *node, void *arg)
+{
+	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
+	char *ecc = NULL;
+	int err;
+
+	if (topo_prop_get_string(node, "memory-controller-properties",
+	    "memory-ecc", &ecc, &err) != 0 && err != ETOPO_PROP_NOENT) {
+		return (-1);
+	}
+	cbarg->cb_ecc_supp = B_FALSE;
+	if (ecc != NULL && strcmp(ecc, "enabled") == 0)
+		cbarg->cb_ecc_supp = B_TRUE;
+
+	topo_hdl_strfree(thp, ecc);
+
+	return (0);
+}
+
+static int
 grok_dimm(topo_hdl_t *thp, tnode_t *node, void *arg)
 {
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
@@ -758,24 +765,13 @@ grok_dimm(topo_hdl_t *thp, tnode_t *node, void *arg)
 		hwg_error("failure gathering common props\n");
 		goto err;
 	}
-	if (topo_prop_get_uint64(node, "dimm-properties", "size",
+	if (topo_prop_get_string(node, "dimm-properties", "dimm-size",
 	    &(dimm->hwdi_size), &err) != 0 && err != ETOPO_PROP_NOENT) {
 		goto err;
 	}
-	if (topo_prop_get_string(node, "dimm-properties", "manufacturer",
-	    &(cinfo->hwci_manufacturer), &err) != 0 &&
-	    err != ETOPO_PROP_NOENT) {
-		goto err;
-	}
-	if (topo_prop_get_string(node, "dimm-properties", "type",
-	    &(dimm->hwdi_type), &err) != 0 &&
-	    err != ETOPO_PROP_NOENT) {
-		goto err;
-	}
+	dimm->hwdi_ecc_supp = cbarg->cb_ecc_supp;
 
 	llist_append(&(hwinfo->hwi_dimms), dimm);
-	cbarg->cb_currslot->hwds_dimm = dimm;
-	cbarg->cb_currslot->hwds_present = B_TRUE;
 	return (0);
 err:
 	hwg_free_dimm(thp, dimm);
@@ -800,40 +796,6 @@ grok_fan(topo_hdl_t *thp, tnode_t *node, void *arg)
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_fans), fan);
-	return (0);
-}
-
-static int
-grok_slot(topo_hdl_t *thp, tnode_t *node, void *arg)
-{
-	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
-	hwg_info_t *hwinfo = cbarg->cb_hw_info;
-	hwg_dimm_slot_t *slot;
-	uint32_t slottype;
-	int err;
-
-	/*
-	 * If it's not a DIMM slot, skip it.
-	 */
-	if (topo_prop_get_uint32(node, TOPO_PGROUP_SLOT, TOPO_PROP_SLOT_TYPE,
-	    &slottype, &err) < 0) {
-		hwg_error("failed to lookup prop %s/%s\n");
-		return (-1);
-	}
-	if (slottype != TOPO_SLOT_TYPE_DIMM)
-		return (0);
-
-	if ((slot = topo_hdl_zalloc(thp, sizeof (hwg_dimm_slot_t))) == NULL) {
-		hwg_error("alloc failed\n");
-		return (-1);
-	}
-	if (get_common_props(thp, node, &(slot->hwds_common_info)) != 0) {
-		hwg_error("failure gathering common props\n");
-		hwg_free_dimm_slot((struct llist *)slot, thp);
-		return (-1);
-	}
-	llist_append(&(hwinfo->hwi_dimm_slots), slot);
-	cbarg->cb_currslot = slot;
 	return (0);
 }
 
@@ -1112,6 +1074,8 @@ topocb(topo_hdl_t *thp, tnode_t *node, void *arg)
 		ret = grok_disk(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, FAN) == 0) {
 		ret = grok_fan(thp, node, arg);
+	} else if (strcmp(cbarg->cb_nodename, MEMORYCONTROL) == 0) {
+		ret = grok_mem_ctrl(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, MOTHERBOARD) == 0) {
 		ret = grok_motherboard(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PCI_DEVICE) == 0) {
@@ -1124,8 +1088,6 @@ topocb(topo_hdl_t *thp, tnode_t *node, void *arg)
 		ret = grok_pcifn(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, PSU) == 0) {
 		ret = grok_psu(thp, node, arg);
-	} else if (strcmp(cbarg->cb_nodename, SLOT) == 0) {
-		ret = grok_slot(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, SP) == 0) {
 		ret = grok_sp(thp, node, arg);
 	} else if (strcmp(cbarg->cb_nodename, STRAND) == 0) {

@@ -16,11 +16,13 @@
 #define	CURRLANES		"current-lanes"
 #define	CURRSPEED		"current-speed"
 #define	DEVICE_PATH		"device-path"
-#define	DIMM			"dimm"
+#define	DIMMS			"dimms"
+#define	DIMM_SZ			"dimm-size"
 #define	DISK			"disk"
 #define	DRIVE_BAYS		"drive-bays"
 #define	DRIVERNM		"device-driver-name"
 #define	DRIVERINST		"device-driver-instance"
+#define	ECC_SUPPORTED		"ecc-supported"
 #define	FANS			"fans"
 #define	FIRMWARE_REV		"firmware-revision"
 #define	HC_FMRI			"hc-fmri"
@@ -504,54 +506,24 @@ dump_bay_json(llist_t *node, void *arg)
 	return (LL_WALK_NEXT);
 }
 
-static void
-dump_dimm_json(hwg_dimm_t *dimm)
-{
-	char *manuf = UNKNOWN, *part = UNKNOWN, *serial = UNKNOWN;
-	hwg_common_info_t *cinfo = &dimm->hwdi_common_info;
-	boolean_t firstelem;
-
-	if (cinfo->hwci_manufacturer != NULL)
-		manuf = cinfo->hwci_manufacturer;
-	if (cinfo->hwci_part != NULL)
-		part = cinfo->hwci_part;
-	if (cinfo->hwci_serial != NULL)
-		serial = cinfo->hwci_serial;
-
-	(void) printf("\"%s\":{", DIMM);
-	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
-	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
-	(void) printf("\"%s\":\"%s\",", PARTNO, part);
-	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
-	(void) printf("\"%s\":\"%s\",", TYPE, dimm->hwdi_type);
-	(void) printf("\"%s\":%llu,", SZ_BYTES, dimm->hwdi_size);
-
-	dump_facilities_json(cinfo);
-
-	(void) printf("}");
-}
-
 static int
-dump_dimm_slot_json(llist_t *node, void *arg)
+dump_dimm_json(llist_t *node, void *arg)
 {
-	hwg_dimm_slot_t *slot = (hwg_dimm_slot_t *)node;
-	hwg_common_info_t *cinfo = &slot->hwds_common_info;
+	hwg_dimm_t *dimm = (hwg_dimm_t *)node;
+	hwg_common_info_t *cinfo = &dimm->hwdi_common_info;
 	boolean_t firstelem = *(boolean_t *)arg;
 
 	if (firstelem == B_FALSE)
 		(void) printf(",");
 	*(boolean_t *)arg = B_FALSE;
 
-	(void) printf("{ \"%s\":\"%s\",", LABEL,
-	    slot->hwds_common_info.hwci_label);
-	(void) printf("\"%s\":\"%s\"", HC_FMRI, cinfo->hwci_fmri);
+	(void) printf("{", DIMM);
+	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
+	(void) printf("\"%s\":\"%s\",", DIMM_SZ, dimm->hwdi_size);
+	(void) printf("\"%s\":\"%s\"", ECC_SUPPORTED,
+	    dimm->hwdi_ecc_supp ? "true" : "false");
 
-	if (slot->hwds_present == B_TRUE) {
-		(void) printf(",");
-		dump_dimm_json(slot->hwds_dimm);
-	}
-	(void) printf(" }\n");
-
+	(void) printf("}");
 	return (LL_WALK_NEXT);
 }
 
@@ -631,12 +603,12 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 		(void) printf("],\n");
 	}
 
-	(void) printf("\n\"%s\": [\n", MEMORY);
+	(void) printf("\n\"%s\": [\n", DIMMS);
 
 	firstelem = B_TRUE;
-	if (llist_walker(&(hwinfo->hwi_dimm_slots), dump_dimm_slot_json,
+	if (llist_walker(&(hwinfo->hwi_dimms), dump_dimm_json,
 	    &firstelem) != 0) {
-		hwg_error("error walking slots\n");
+		hwg_error("error walking dimms\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");
@@ -647,7 +619,7 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	firstelem = B_TRUE;
 	if (llist_walker(&(hwinfo->hwi_pcidevs), dump_pcidev_json,
 	    &firstelem) != 0) {
-		hwg_error("error walking slots\n");
+		hwg_error("error walking pcidevs\n");
 		return (-1);
 	} else {
 		(void) printf("],\n");

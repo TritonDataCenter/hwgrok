@@ -20,7 +20,7 @@
 #include "llist.h"
 
 #define	EXIT_USAGE	2
-#define	HWGROK_VERSION	"20190905"
+#define	HWGROK_VERSION	"20190905a"
 
 extern void hwg_debug(const char *, ...);
 extern void hwg_error(const char *, ...);
@@ -97,9 +97,9 @@ typedef struct hwg_processor {
 	uint_t hwpr_num_cores;
 	uint_t hwpr_num_threads;
 	uint_t hwpr_speed;
-	uint_t hwpr_family;
-	uint_t hwpr_model;
-	uint_t hwpr_stepping;
+	hwg_numeric_prop_t hwpr_family;
+	hwg_numeric_prop_t hwpr_model;
+	hwg_numeric_prop_t hwpr_stepping;
 	char *hwpr_brand;
 } hwg_processor_t;
 

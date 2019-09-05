@@ -369,12 +369,18 @@ dump_processor_json(llist_t *node, void *arg)
 	(void) printf("\"%s\":\"%s\",", MODEL, model);
 
 	(void) printf("\"%s\":\"%s\",", PROC_BRAND, brand);
-	(void) printf("\"%s\":%u,", PROC_FAMILY, chip->hwpr_family);
-	(void) printf("\"%s\":%u,", PROC_MODEL, chip->hwpr_model);
-	(void) printf("\"%s\":%u,", PROC_STEPPING, chip->hwpr_stepping);
-	(void) printf("\"%s\":%u,", NUM_CORES, chip->hwpr_num_cores);
-	(void) printf("\"%s\":%u,", NUM_THREADS,
-	    (chip->hwpr_num_threads / chip->hwpr_num_cores));
+	if (chip->hwpr_family.hnp_is_set)
+		(void) printf("\"%s\":%u,", PROC_FAMILY, chip->hwpr_family);
+	if (chip->hwpr_model.hnp_is_set)
+		(void) printf("\"%s\":%u,", PROC_MODEL, chip->hwpr_model);
+	if (chip->hwpr_stepping.hnp_is_set)
+		(void) printf("\"%s\":%u,", PROC_STEPPING,
+		    chip->hwpr_stepping);
+	if (chip->hwpr_num_cores > 0 && chip->hwpr_num_threads > 0) {
+		(void) printf("\"%s\":%u,", NUM_CORES, chip->hwpr_num_cores);
+		(void) printf("\"%s\":%u,", NUM_THREADS,
+		    (chip->hwpr_num_threads / chip->hwpr_num_cores));
+	}
 
 	dump_facilities_json(cinfo);
 

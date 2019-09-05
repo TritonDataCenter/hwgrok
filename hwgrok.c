@@ -667,13 +667,13 @@ grok_chip(topo_hdl_t *thp, tnode_t *node, void *arg)
 	llist_append(&(hwinfo->hwi_processors), processor);
 	cbarg->cb_currchip = processor;
 
-	if (topo_prop_get_int32(node, "chip-properties", "family",
-	    &processor->hwpr_family, &err) != 0 ||
-	    topo_prop_get_int32(node, "chip-properties", "model",
-	    &processor->hwpr_model, &err) != 0 ||
-	    topo_prop_get_int32(node, "chip-properties", "stepping",
-	    &processor->hwpr_stepping, &err) != 0) {
-		hwg_error("required chip node properties missing on node: "
+	if (hwg_get_prop(node, TOPO_TYPE_INT32, "chip-properties", "family",
+	    &processor->hwpr_family) != 0 ||
+	    hwg_get_prop(node, TOPO_TYPE_INT32, "chip-properties", "model",
+	    &processor->hwpr_model) != 0 ||
+	    hwg_get_prop(node, TOPO_TYPE_INT32, "chip-properties", "stepping",
+	    &processor->hwpr_stepping) != 0) {
+		hwg_error("failed to lookup chip properties on node: "
 		    "%s=%d", cbarg->cb_nodename, cbarg->cb_nodeinst);
 		goto err;
 	}
@@ -816,19 +816,19 @@ grok_pcidev(topo_hdl_t *thp, tnode_t *node, void *arg)
 		return (-1);
 	}
 	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_PCI,
-	    TOPO_PCI_MAX_WIDTH, &pcidev->hwpci_maxlanes) != 0) {
+	    "link-maximum-width", &pcidev->hwpci_maxlanes) != 0) {
 		return (-1);
 	}
 	if (hwg_get_prop(node, TOPO_TYPE_UINT32, TOPO_PGROUP_PCI,
-	    TOPO_PCI_CUR_WIDTH, &pcidev->hwpci_currlanes) != 0) {
+	    "link-current-width", &pcidev->hwpci_currlanes) != 0) {
 		return (-1);
 	}
 	if (hwg_get_prop(node, TOPO_TYPE_UINT64, TOPO_PGROUP_PCI,
-	    TOPO_PCI_MAX_SPEED, &pcidev->hwpci_maxspeed) != 0) {
+	    "link-maximum-speed", &pcidev->hwpci_maxspeed) != 0) {
 		return (-1);
 	}
 	if (hwg_get_prop(node, TOPO_TYPE_UINT64, TOPO_PGROUP_PCI,
-	    TOPO_PCI_CUR_SPEED, &pcidev->hwpci_currspeed) != 0) {
+	    "link-current-speed", &pcidev->hwpci_currspeed) != 0) {
 		return (-1);
 	}
 	llist_append(&(hwinfo->hwi_pcidevs), pcidev);

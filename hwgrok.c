@@ -1033,7 +1033,11 @@ grok_chassis(topo_hdl_t *thp, tnode_t *node, void *arg)
 {
 	hwg_cbarg_t *cbarg = (hwg_cbarg_t *)arg;
 	hwg_info_t *hwinfo = cbarg->cb_hw_info;
+	hwg_common_info_t *cinfo;
 	hwg_chassis_t *chassis;
+	nvlist_t *fmri = NULL, *auth;
+	char *val;
+	int err;
 
 	cbarg->cb_is_chassis_dev = B_TRUE;
 	if ((chassis = topo_hdl_zalloc(thp, sizeof (hwg_chassis_t))) == NULL) {
@@ -1043,12 +1047,37 @@ grok_chassis(topo_hdl_t *thp, tnode_t *node, void *arg)
 	if (get_common_props(thp, node, &(chassis->hwch_common_info)) != 0) {
 		hwg_error("failure gathering common props on node: %s=%d\n",
 		    cbarg->cb_nodename, cbarg->cb_nodeinst);
-		hwg_free_chassis(thp, chassis);
-		return (-1);
+		goto err;
 	}
+	if (topo_node_resource(node, &fmri, &err) != 0) {
+		hwg_error("failed to get chassis FMRI");
+		goto err;
+	}
+
+	cinfo = &chassis->hwch_common_info;
+	if (nvlist_lookup_nvlist(fmri, FM_FMRI_AUTHORITY, &auth) != 0) {
+		hwg_error("failed to lookup chassis authority");
+		nvlist_print(stderr, fmri);
+		goto err;
+	}
+
+	if (nvlist_lookup_string(auth, FM_FMRI_AUTH_PRODUCT, &val) == 0 &&
+	    (cinfo->hwci_model = topo_hdl_strdup(thp, val)) == NULL)
+		goto err;
+
+	if (nvlist_lookup_string(auth, FM_FMRI_AUTH_CHASSIS, &val) == 0 &&
+	    (cinfo->hwci_serial = topo_hdl_strdup(thp, val)) == NULL)
+		goto err;
+
 	hwinfo->hwi_chassis = chassis;
 
+	nvlist_free(fmri);
 	return (0);
+
+err:
+	hwg_free_chassis(thp, chassis);
+	nvlist_free(fmri);
+	return (-1);
 }
 
 static int

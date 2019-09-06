@@ -267,18 +267,21 @@ dump_motherboard_json(hwg_motherboard_t *mb)
 static void
 dump_chassis_json(hwg_chassis_t *chassis)
 {
-	char *model = UNKNOWN, *manuf = UNKNOWN;
+	char *model = UNKNOWN, *manuf = UNKNOWN, *serial = UNKNOWN;
 	hwg_common_info_t *cinfo = &chassis->hwch_common_info;
 
 	if (cinfo->hwci_model != NULL)
 		model = cinfo->hwci_model;
 	if (cinfo->hwci_manufacturer != NULL)
 		manuf = cinfo->hwci_manufacturer;
+	if (cinfo->hwci_serial != NULL)
+		serial = cinfo->hwci_serial;
 
 	(void) printf("\"%s\":{", CHASSIS);
 	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
 	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
 	(void) printf("\"%s\":\"%s\",", MODEL, model);
+	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
 
 	dump_facilities_json(cinfo);
 
@@ -596,7 +599,8 @@ dump_hw_config_json(hwg_info_t *hwinfo, char *type)
 	if (hwinfo->hwi_sp != NULL)
 		dump_sp_json(hwinfo->hwi_sp);
 
-	dump_motherboard_json(hwinfo->hwi_motherboard);
+	if (hwinfo->hwi_motherboard != NULL)
+		dump_motherboard_json(hwinfo->hwi_motherboard);
 
 	(void) printf("\n\"%s\": [\n", PROCESSORS);
 

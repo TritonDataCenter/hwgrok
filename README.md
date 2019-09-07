@@ -36,14 +36,15 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
   "chassis": {
     "hc-fmri": "hc:///chassis=0",
     "manufacturer": "unknown",
-    "model": "unknown",
+    "model": "Joyent-M12G5",
+    "serial-number": "S287109X8231992",
     "sensors": [
       {
         "name": "System Temp",
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 35,
+        "reading": 34,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -86,7 +87,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 59,
+        "reading": 57,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -114,7 +115,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 57,
+        "reading": 59,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -128,7 +129,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 45,
+        "reading": 44,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -170,7 +171,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 46,
+        "reading": 47,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -184,7 +185,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 49,
+        "reading": 50,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -198,7 +199,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "temperature",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 38,
+        "reading": 39,
         "units": "DEGREES_C",
         "threshold-lower-non-critical": 10,
         "threshold-lower-critical": 5,
@@ -240,7 +241,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "voltage",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 11.941,
+        "reading": 12,
         "units": "VOLTS",
         "threshold-lower-non-critical": 10.761,
         "threshold-lower-critical": 10.289,
@@ -344,7 +345,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "type": "voltage",
         "state": 0,
         "state-description": "NO_STATES_ASSERTED",
-        "reading": 1.854,
+        "reading": 1.863,
         "units": "VOLTS",
         "threshold-lower-non-critical": 1.62,
         "threshold-lower-critical": 1.584,
@@ -389,495 +390,125 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "label": "unknown",
       "hc-fmri": "hc:///motherboard=0/chip=0",
       "manufacturer": "Intel",
-      "model": "unknown",
+      "serial-number": "iv0-INTC-50654-e82ecd695e2c518d",
       "processor-brand": "Intel(r) Xeon(r) Gold 6132 CPU @ 2.60GHz",
-      "processor-family": "6",
-      "processor-model": "85",
-      "processor-stepping": "4",
+      "processor-family": 6,
+      "processor-model": 85,
+      "processor-stepping": 4,
       "number-of-cores": 14,
       "number-of-threads-per-core": 2,
-      "sensors": [],
+      "sensors": [
+        {
+          "name": "temp",
+          "type": "TEMP",
+          "reading": 54,
+          "units": "DEGREES_C"
+        }
+      ],
       "leds": []
     },
     {
       "label": "unknown",
       "hc-fmri": "hc:///motherboard=0/chip=1",
       "manufacturer": "Intel",
-      "model": "unknown",
+      "serial-number": "iv0-INTC-50654-e8d0f0d7a4fbec8d",
       "processor-brand": "Intel(r) Xeon(r) Gold 6132 CPU @ 2.60GHz",
-      "processor-family": "6",
-      "processor-model": "85",
-      "processor-stepping": "4",
+      "processor-family": 6,
+      "processor-model": 85,
+      "processor-stepping": 4,
       "number-of-cores": 14,
       "number-of-threads-per-core": 2,
-      "sensors": [],
+      "sensors": [
+        {
+          "name": "temp",
+          "type": "TEMP",
+          "reading": 52,
+          "units": "DEGREES_C"
+        }
+      ],
       "leds": []
     }
   ],
-  "memory": [
+  "dimms": [
     {
-      "label": "P1-DIMMA1",
-      "hc-fmri": "hc:///motherboard=0/slot=0",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=0/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BC882",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMA1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 36,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=0/dram-channel=0/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMMA2",
-      "hc-fmri": "hc:///motherboard=0/slot=1",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=1/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "36246BC4",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMA2 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 37,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=0/dram-channel=0/dimm=1",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMMB1",
-      "hc-fmri": "hc:///motherboard=0/slot=2",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=2/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "36246309",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMB1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 37,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=0/dram-channel=1/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMMC1",
-      "hc-fmri": "hc:///motherboard=0/slot=3",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=3/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "36246BC0",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMC1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 38,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=0/dram-channel=2/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMMD1",
-      "hc-fmri": "hc:///motherboard=0/slot=4",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=4/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BBB9F",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMD1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 44,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=1/dram-channel=0/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMMD2",
-      "hc-fmri": "hc:///motherboard=0/slot=5",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=5/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BC781",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMD2 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 41,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=1/dram-channel=0/dimm=1",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMME1",
-      "hc-fmri": "hc:///motherboard=0/slot=6",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=6/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362468CC",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMME1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 48,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=1/dram-channel=1/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P1-DIMMF1",
-      "hc-fmri": "hc:///motherboard=0/slot=7",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=7/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BDCBA",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P1-DIMMF1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 48,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=0/memory-controller=1/dram-channel=2/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMA1",
-      "hc-fmri": "hc:///motherboard=0/slot=8",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=8/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "35808F99",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMA1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 48,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=0/dram-channel=0/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMA2",
-      "hc-fmri": "hc:///motherboard=0/slot=9",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=9/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "34EE8887",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMA2 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 48,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=0/dram-channel=0/dimm=1",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMB1",
-      "hc-fmri": "hc:///motherboard=0/slot=10",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=10/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "35808FF1",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMB1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 49,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=0/dram-channel=1/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMC1",
-      "hc-fmri": "hc:///motherboard=0/slot=11",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=11/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "34EE7E63",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMC1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 47,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=0/dram-channel=2/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMD1",
-      "hc-fmri": "hc:///motherboard=0/slot=12",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=12/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "34EE88C1",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMD1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 41,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=1/dram-channel=0/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMD2",
-      "hc-fmri": "hc:///motherboard=0/slot=13",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=13/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "34EE8821",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMD2 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 42,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=1/dram-channel=0/dimm=1",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMME1",
-      "hc-fmri": "hc:///motherboard=0/slot=14",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=14/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "34EE8882",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMME1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 40,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=1/dram-channel=1/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     },
     {
-      "label": "P2-DIMMF1",
-      "hc-fmri": "hc:///motherboard=0/slot=15",
-      "dimm": {
-        "hc-fmri": "hc:///motherboard=0/slot=15/dimm=0",
-        "manufacturer": "Samsung",
-        "part-number": "M393A4K40BB2-CTD",
-        "serial-number": "362BBD60",
-        "type": "DDR4",
-        "size-in-bytes": "34359738368",
-        "sensors": [
-          {
-            "name": "P2-DIMMF1 Temp",
-            "type": "temperature",
-            "state": 0,
-            "state-description": "NO_STATES_ASSERTED",
-            "reading": 38,
-            "units": "DEGREES_C",
-            "threshold-lower-non-critical": 10,
-            "threshold-lower-critical": 5,
-            "threshold-lower-non-recoverable": 5,
-            "threshold-upper-non-critical": 80,
-            "threshold-upper-critical": 85,
-            "threshold-upper-non-recoverable": 90
-          }
-        ],
-        "leds": []
-      }
+      "hc-fmri": "hc:///motherboard=0/chip=1/memory-controller=1/dram-channel=2/dimm=0",
+      "dimm-size": "32G",
+      "ecc-supported": "true"
     }
   ],
   "pci-devices": [
@@ -889,6 +520,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "unknown",
       "device-driver-name": "pcieb",
       "device-driver-instance": 1,
+      "max-lanes": 1,
+      "current-lanes": 1,
+      "max-speed": 5000000000,
+      "current-speed": 5000000000,
       "device-path": "/pci@0,0/pci8086,a195@1c,5/pci1a03,1150@0"
     },
     {
@@ -909,6 +544,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "unknown",
       "device-driver-name": "pcieb",
       "device-driver-instance": 3,
+      "max-lanes": 16,
+      "current-lanes": 8,
+      "max-speed": 8000000000,
+      "current-speed": 8000000000,
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0"
     },
     {
@@ -919,6 +558,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "unknown",
       "device-driver-name": "pcieb",
       "device-driver-instance": 4,
+      "max-lanes": 1,
+      "current-lanes": 1,
+      "max-speed": 2500000000,
+      "current-speed": 2500000000,
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0/pci8086,37c5@3"
     },
     {
@@ -929,6 +572,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "unknown",
       "device-driver-name": "i40e",
       "device-driver-instance": 1,
+      "max-lanes": 1,
+      "current-lanes": 1,
+      "max-speed": 2500000000,
+      "current-speed": 2500000000,
       "device-path": "/pci@14,0/pci8086,2030@0/pci8086,37c0@0/pci8086,37c5@3/pci15d9,37d2@0,1"
     },
     {
@@ -939,6 +586,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "Ethernet Server Adapter X520-2",
       "device-driver-name": "ixgbe",
       "device-driver-instance": 1,
+      "max-lanes": 8,
+      "current-lanes": 8,
+      "max-speed": 5000000000,
+      "current-speed": 5000000000,
       "device-path": "/pci@34,0/pci8086,2032@2/pci8086,c@0,1"
     },
     {
@@ -949,6 +600,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "AOC-S3008L-L8e",
       "device-driver-name": "mpt_sas",
       "device-driver-instance": 0,
+      "max-lanes": 8,
+      "current-lanes": 8,
+      "max-speed": 8000000000,
+      "current-speed": 8000000000,
       "device-path": "/pci@56,0/pci8086,2030@0/pci15d9,808@0"
     },
     {
@@ -959,6 +614,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "AOC-S3008L-L8e",
       "device-driver-name": "mpt_sas",
       "device-driver-instance": 2,
+      "max-lanes": 8,
+      "current-lanes": 8,
+      "max-speed": 8000000000,
+      "current-speed": 8000000000,
       "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0"
     },
     {
@@ -969,6 +628,10 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
       "pci-subsystem-name": "AOC-S3008L-L8e",
       "device-driver-name": "mpt_sas",
       "device-driver-instance": 1,
+      "max-lanes": 8,
+      "current-lanes": 8,
+      "max-speed": 8000000000,
+      "current-speed": 8000000000,
       "device-path": "/pci@ce,0/pci8086,2030@0/pci15d9,808@0"
     }
   ],
@@ -997,14 +660,14 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUSMH8010BSS204",
         "serial-number": "0HWZDBUA",
         "firmware-revision": "C360",
-        "size-in-bytes": 1245995008,
+        "size-in-bytes": 100030242816,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@1/disk@w5000cca0496fa475,0",
         "logical-disk": "c3t5000CCA0496FA475d0",
         "sensors": [
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 29,
+            "reading": 31,
             "units": "DEGREES_C"
           }
         ],
@@ -1035,7 +698,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08V1ERBH",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@2/disk@w5000cca031029f85,0",
         "logical-disk": "c4t5000CCA031029F85d0",
@@ -1043,7 +706,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 41,
+            "reading": 40,
             "units": "DEGREES_C"
           }
         ],
@@ -1074,7 +737,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08GAGYSZ",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@4/disk@w5000cca02c130f79,0",
         "logical-disk": "c5t5000CCA02C130F79d0",
@@ -1082,7 +745,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 44,
+            "reading": 41,
             "units": "DEGREES_C"
           }
         ],
@@ -1113,7 +776,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08V134VH",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@8/disk@w5000cca0310200e1,0",
         "logical-disk": "c6t5000CCA0310200E1d0",
@@ -1121,7 +784,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 44,
+            "reading": 41,
             "units": "DEGREES_C"
           }
         ],
@@ -1152,7 +815,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08V1EUPH",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@10/disk@w5000cca03102a121,0",
         "logical-disk": "c7t5000CCA03102A121d0",
@@ -1160,7 +823,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 44,
+            "reading": 41,
             "units": "DEGREES_C"
           }
         ],
@@ -1191,7 +854,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08V19J2H",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@20/disk@w5000cca031026069,0",
         "logical-disk": "c8t5000CCA031026069d0",
@@ -1199,7 +862,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 45,
+            "reading": 42,
             "units": "DEGREES_C"
           }
         ],
@@ -1230,7 +893,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08V19H2H",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@40/disk@w5000cca031025fed,0",
         "logical-disk": "c9t5000CCA031025FEDd0",
@@ -1238,7 +901,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 45,
+            "reading": 41,
             "units": "DEGREES_C"
           }
         ],
@@ -1269,7 +932,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "HUC101818CS4200",
         "serial-number": "08G81PYZ",
         "firmware-revision": "ADB0",
-        "size-in-bytes": 1706716160,
+        "size-in-bytes": 1800360124416,
         "speed-in-rpm": 10520,
         "device-path": "/pci@7d,0/pci8086,2030@0/pci15d9,808@0/iport@80/disk@w5000cca02c0ea585,0",
         "logical-disk": "c10t5000CCA02C0EA585d0",
@@ -1277,7 +940,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
           {
             "name": "temp",
             "type": "TEMP",
-            "reading": 46,
+            "reading": 42,
             "units": "DEGREES_C"
           }
         ],
@@ -1504,7 +1167,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "SSD 883 DCT 1.92TB",
         "serial-number": "S483NW0K600158N",
         "firmware-revision": "HXT7004Q",
-        "size-in-bytes": 533028864,
+        "size-in-bytes": 1920383410176,
         "device-path": "/pci@0,0/pci15d9,981@11,5/disk@4,0",
         "logical-disk": "c1t4d0",
         "sensors": [
@@ -1538,7 +1201,7 @@ For now, only use the 32-bit version, which will be located in the ```i386``` su
         "model": "STORE N GO",
         "serial-number": "E2FF6CAD256CB6DEF3E7",
         "firmware-revision": "8.07",
-        "size-in-bytes": 2749366272,
+        "size-in-bytes": 15634268160,
         "device-path": "/pci@0,0/pci15d9,981@14/storage@3/disk@0,0",
         "logical-disk": "c2t0d0",
         "sensors": [],

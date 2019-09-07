@@ -345,7 +345,7 @@ dump_psu_json(llist_t *node, void *arg)
 static int
 dump_processor_json(llist_t *node, void *arg)
 {
-	char *model = UNKNOWN, *manuf = UNKNOWN, *brand = UNKNOWN;
+	char *serial = UNKNOWN, *manuf = UNKNOWN, *brand = UNKNOWN;
 	char *label = UNKNOWN;
 	hwg_processor_t *chip = (hwg_processor_t *)node;
 	hwg_common_info_t *cinfo = &chip->hwpr_common_info;
@@ -360,8 +360,8 @@ dump_processor_json(llist_t *node, void *arg)
 
 	(void) printf("{\"%s\":\"%s\",", LABEL, label);
 
-	if (cinfo->hwci_model != NULL)
-		model = cinfo->hwci_model;
+	if (cinfo->hwci_serial != NULL)
+		serial = cinfo->hwci_serial;
 	if (cinfo->hwci_manufacturer != NULL)
 		manuf = cinfo->hwci_manufacturer;
 	if (chip->hwpr_brand != NULL)
@@ -369,7 +369,7 @@ dump_processor_json(llist_t *node, void *arg)
 
 	(void) printf("\"%s\":\"%s\",", HC_FMRI, cinfo->hwci_fmri);
 	(void) printf("\"%s\":\"%s\",", MANUF, manuf);
-	(void) printf("\"%s\":\"%s\",", MODEL, model);
+	(void) printf("\"%s\":\"%s\",", SERIAL, serial);
 
 	(void) printf("\"%s\":\"%s\",", PROC_BRAND, brand);
 	if (chip->hwpr_family.hnp_is_set)

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <unistd.h>
 #include <fm/libtopo.h>
 #include <fm/topo_hc.h>
 #include <sys/fm/protocol.h>
@@ -1140,6 +1141,11 @@ main(int argc, char *argv[])
 	hwg_cbarg_t cbarg = { 0 };
 
 	pname = argv[0];
+
+	if (getuid() != 0) {
+		(void) fprintf(stderr, "This program must be run as root.\n");
+		return (EXIT_FAILURE);
+	}
 
 	while (optind < argc) {
 		while ((c = getopt(argc, argv, optstr)) != -1) {
